@@ -47,6 +47,7 @@ import { createProxyMiddleware } from 'http-proxy-middleware';
 import { hasNoValue, hasValue } from './src/app/shared/empty.util';
 
 import { UIServerConfig } from './src/config/ui-server-config.interface';
+import { resolveUiBindAddress } from './src/config/server-config.util';
 
 import { ServerAppModule } from './src/main.server';
 
@@ -79,6 +80,9 @@ let anonymousCache: LRU<string, any>;
 
 // extend environment with app config for server
 extendEnvironmentWithAppConfig(environment, appConfig);
+
+// Server-only listen address. Public/canonical URLs continue to use ui.host.
+const UI_BIND_ADDRESS = resolveUiBindAddress(environment.ui);
 
 // The REST server base URL
 const REST_BASE_URL = environment.rest.ssrBaseUrl || environment.rest.baseUrl;
@@ -540,7 +544,7 @@ function isUserAuthenticated(req): boolean {
  * Callback function for when the server has started
  */
 function serverStarted() {
-  console.log(`[${new Date().toTimeString()}] Listening at ${environment.ui.baseUrl}`);
+  console.log(`[${new Date().toTimeString()}] Listening on ${UI_BIND_ADDRESS}:${environment.ui.port}; public URL ${environment.ui.baseUrl}`);
 }
 
 /*
@@ -551,7 +555,7 @@ function createHttpsServer(keys) {
   const listener = createServer({
     key: keys.serviceKey,
     cert: keys.certificate
-  }, app).listen(environment.ui.port, environment.ui.host, () => {
+  }, app).listen(environment.ui.port, UI_BIND_ADDRESS, () => {
     serverStarted();
   });
 
@@ -571,7 +575,7 @@ function createHttpsServer(keys) {
  */
 function run() {
   const port = environment.ui.port || 4000;
-  const host = environment.ui.host || '/';
+  const host = UI_BIND_ADDRESS || '/';
 
   // Start up the Node server
   const server = app();

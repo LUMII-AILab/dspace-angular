@@ -7,6 +7,7 @@ import { AppConfig } from './app-config.interface';
 import { Config } from './config.interface';
 import { DefaultAppConfig } from './default-app-config';
 import { ServerConfig } from './server-config.interface';
+import { getPublicRestConfig, resolveUiBindAddress } from './server-config.util';
 import { mergeConfig } from './config.util';
 import { isNotEmpty } from '../app/shared/empty.util';
 
@@ -221,6 +222,7 @@ export const buildAppConfig = (destConfigPath?: string): AppConfig => {
   appConfig.ui.port = isNotEmpty(ENV('PORT', true)) ? getNumberFromString(ENV('PORT', true)) : appConfig.ui.port;
   appConfig.ui.nameSpace = isNotEmpty(ENV('NAMESPACE', true)) ? ENV('NAMESPACE', true) : appConfig.ui.nameSpace;
   appConfig.ui.ssl = isNotEmpty(ENV('SSL', true)) ? getBooleanFromString(ENV('SSL', true)) : appConfig.ui.ssl;
+  appConfig.ui.bindAddress = resolveUiBindAddress(appConfig.ui, ENV('UI_BINDADDRESS', true));
 
   // apply existing non convention REST environment variables
   appConfig.rest.host = isNotEmpty(ENV('REST_HOST', true)) ? ENV('REST_HOST', true) : appConfig.rest.host;
@@ -242,11 +244,7 @@ export const buildAppConfig = (destConfigPath?: string): AppConfig => {
       production: appConfig.production,
       // REST API configuration - only public endpoint
       ...(appConfig.rest && {
-        rest: {
-          baseUrl: appConfig.rest.baseUrl,
-          nameSpace: appConfig.rest.nameSpace,
-          ssrBaseUrl: appConfig.rest.ssrBaseUrl,
-        },
+        rest: getPublicRestConfig(appConfig.rest),
       }),
       // UI namespace for routing
       ...(appConfig.ui ? { ui: { nameSpace: appConfig.ui.nameSpace } } : {}),
