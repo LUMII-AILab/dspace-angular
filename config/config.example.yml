@@ -7,6 +7,10 @@ debug: false
 ui:
   ssl: false
   host: localhost
+  # Optional server-only listen address. Defaults to host when omitted.
+  # DSPACE_UI_BINDADDRESS overrides this value without changing the public host.
+  # Set to 0.0.0.0 when the public host is not a local container interface.
+  # bindAddress: 0.0.0.0
   port: 4000
   # NOTE: Space is capitalized because 'namespace' is a reserved string in TypeScript
   nameSpace: /
