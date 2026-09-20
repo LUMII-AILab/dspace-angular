@@ -71,6 +71,9 @@
             "baseHref": "/"
           },
           "configurations": {
+            "clarin": {
+              "baseHref": "/repository/"
+            },
             "development": {
               "buildOptimizer": false,
               "optimization": false,
