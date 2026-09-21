@@ -1,0 +1,4 @@
+---
+# Shared public paths; REST uses the same context internally and externally.
+clarin_ui_prefix: /repository
+clarin_rest_prefix: "{{ clarin_ui_prefix }}/server"

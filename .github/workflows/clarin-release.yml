@@ -1,0 +1,137 @@
+---
+name: CLARIN frontend release
+on:
+  pull_request:
+    branches: [clarin-v7]
+  push:
+    branches: [clarin-v7]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: clarin-release-${{ github.ref }}
+  cancel-in-progress: false
+jobs:
+  build:
+    if: github.repository == 'LUMII-AILab/dspace-angular'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    outputs:
+      digest: ${{ steps.build.outputs.digest }}
+      image: ${{ steps.inputs.outputs.image }}
+      tag: ${{ steps.inputs.outputs.tag }}
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - name: Derive source identity and validate release tooling
+        id: inputs
+        run: |
+          python3 -m unittest discover -s ci/release -p 'test_release.py'
+          python3 ci/release/frontend_image.py outputs >> "$GITHUB_OUTPUT"
+          mkdir -p output/evidence
+          cp ci/release/image/inputs.json output/evidence/inputs.json
+      - name: Export this commit without submodules
+        id: source
+        run: |
+          python3 ci/release/frontend_image.py prepare-source \
+            "$RUNNER_TEMP/source-${GITHUB_RUN_ID}-${GITHUB_RUN_ATTEMPT}" \
+            output/evidence >> "$GITHUB_OUTPUT"
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+        with:
+          version: ${{ steps.inputs.outputs.buildx_version }}
+          driver-opts: image=${{ steps.inputs.outputs.buildkit_image }}
+          buildkitd-flags: ""
+      - name: Build once without registry credentials
+        id: build
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: ci/release/image
+          file: ci/release/image/Dockerfile
+          build-contexts: frontend=${{ steps.source.outputs.context }}
+          platforms: linux/amd64
+          push: false
+          outputs: type=oci,dest=output/frontend.oci.tar
+          tags: ${{ steps.inputs.outputs.image }}:${{ steps.inputs.outputs.tag }}
+          cache-from: type=gha,scope=clarin-frontend
+          cache-to: ${{ github.event_name != 'pull_request' && 'type=gha,scope=clarin-frontend,mode=max' || '' }}
+          provenance: mode=max
+          attests: type=sbom,generator=${{ steps.inputs.outputs.sbom_generator }}
+          build-args: |
+            NODE_IMAGE=${{ steps.inputs.outputs.node_image }}
+            NODE_VERSION=${{ steps.inputs.outputs.node_version }}
+            YARN_VERSION=${{ steps.inputs.outputs.yarn_version }}
+            APK_PACKAGES=${{ steps.inputs.outputs.apk_packages }}
+            SOURCE_PACKAGE_SHA256=${{ steps.inputs.outputs.source_package_sha256 }}
+            SOURCE_LOCK_SHA256=${{ steps.inputs.outputs.source_lock_sha256 }}
+            UPSTREAM_DOCKERFILE_SHA256=${{ steps.inputs.outputs.upstream_dockerfile_sha256 }}
+            SOURCE_REVISION=${{ steps.inputs.outputs.source_revision }}
+            OPS_REVISION=${{ steps.inputs.outputs.compatibility_revision }}
+      - name: Verify OCI identity, scan and load the exact runtime image
+        env:
+          EXPECTED_DIGEST: ${{ steps.build.outputs.digest }}
+          SKOPEO: ${{ steps.inputs.outputs.skopeo_image }}
+        run: |
+          python3 ci/release/frontend_image.py inspect output/frontend.oci.tar \
+            "$EXPECTED_DIGEST" output/evidence
+          bash ci/release/scan.sh output/frontend.oci.tar output/evidence
+          docker run --rm --user "$(id -u):$(id -g)" -v "$PWD/output:/artifact" \
+            "$SKOPEO" copy --override-os linux --override-arch amd64 \
+            oci-archive:/artifact/frontend.oci.tar docker-archive:/artifact/runtime.tar:clarin-runtime:test
+          docker load --input output/runtime.tar
+          rm output/runtime.tar
+      - name: Qualify the exact artifact against pinned HTTPS fixtures
+        env:
+          CLARIN_COMPAT_ROOT: ${{ github.workspace }}/ci/release/compatibility
+          SOURCE: ${{ steps.inputs.outputs.source_revision }}
+        run: |
+          python3 -m venv "$RUNNER_TEMP/ansible"
+          "$RUNNER_TEMP/ansible/bin/pip" install ansible-core==2.21.3
+          export PATH="$RUNNER_TEMP/ansible/bin:$PATH"
+          docker pull nginx@sha256:dc5069ad14f19660b141b21236140b91656bf89bbc3e2417c70ae650cd66104c
+          python3 ci/release/test_https_runtime.py \
+            --frontend "$(jq -er .config_digest output/evidence/identity.json)" \
+            --source "$SOURCE" --report output/evidence/https.json
+          python3 ci/release/record.py
+      - name: Preserve candidate for publication retries
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: frontend-candidate-${{ github.run_id }}
+          path: output/
+          overwrite: true
+          retention-days: 30
+          compression-level: 0
+          if-no-files-found: error
+  publish:
+    needs: build
+    if: >-
+      github.event_name != 'pull_request' && github.ref == 'refs/heads/clarin-v7' &&
+      github.repository == 'LUMII-AILab/dspace-angular' &&
+      vars.CLARIN_RELEASE_PUBLISH_ENABLED == 'true'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    permissions:
+      contents: write
+      packages: write
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09 # v5
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: frontend-candidate-${{ github.run_id }}
+          path: output
+      - name: Publish tested artifact and durable release reports
+        env:
+          GHCR_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GHCR_USER: ${{ github.actor }}
+          EXPECTED_DIGEST: ${{ needs.build.outputs.digest }}
+          IMAGE: ${{ needs.build.outputs.image }}
+          TAG: ${{ needs.build.outputs.tag }}
+        run: |
+          cp output/evidence/inputs.json ci/release/image/inputs.json
+          python3 ci/release/verify_record.py
+          bash ci/release/publish.sh
+          python3 ci/release/publish_report.py

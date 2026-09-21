@@ -1,0 +1,20 @@
+# Ansible-managed rehearsal configuration; contains no credentials.
+ui:
+  ssl: true
+  host: {{ clarin_public_host | default('repository.clarin.test') }}
+  bindAddress: 0.0.0.0
+  useProxies: true
+  port: {{ clarin_public_port | default(443) }}
+  nameSpace: {{ clarin_ui_prefix }}/
+rest:
+  ssl: true
+  host: {{ clarin_public_host | default('repository.clarin.test') }}
+  port: {{ clarin_public_port | default(443) }}
+  nameSpace: {{ clarin_rest_prefix }}
+  ssrBaseUrl: http://dspace:8080/repository/server
+universal:
+  replaceRestUrl: true
+  transferState: false
+matomo:
+  hostUrl: ''
+  siteId: 0

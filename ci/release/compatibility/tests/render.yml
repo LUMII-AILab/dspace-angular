@@ -1,0 +1,33 @@
+---
+# Synthetic fixture rendering only; no server roles, inventories or private inputs.
+- name: Render pinned frontend and proxy compatibility templates
+  hosts: localhost
+  connection: local
+  gather_facts: false
+  vars:
+    clarin_dspace_anubis_enabled: false
+    clarin_public_host: repository.clarin.test
+    clarin_public_port: 443
+    fixture_root: "{{ lookup('env', 'CLARIN_TEST_ROOT') }}"
+  vars_files:
+    - ../ansible/vars/public-paths.yml
+  tasks:
+    - name: Require disposable test location
+      ansible.builtin.assert:
+        that: fixture_root is match('^/tmp/clarin-test-[A-Za-z0-9_-]+$')
+    - name: Create fixture configuration directories
+      ansible.builtin.file:
+        path: '{{ fixture_root }}/config/{{ item }}'
+        state: directory
+        mode: '0755'
+      loop: [frontend, proxy]
+    - name: Render reviewed templates with synthetic public configuration
+      ansible.builtin.template:
+        src: '../ansible/roles/clarin_dspace/templates/{{ item.src }}.j2'
+        dest: '{{ fixture_root }}/config/{{ item.dest }}'
+        mode: '0644'
+      loop:
+        - {src: nginx.conf, dest: proxy/nginx.conf}
+        - {src: config.prod.yml, dest: frontend/config.prod.yml}
+        - {src: dspace-ui.json, dest: frontend/dspace-ui.json}
+        - {src: http-launcher.cjs, dest: frontend/http-launcher.cjs}
