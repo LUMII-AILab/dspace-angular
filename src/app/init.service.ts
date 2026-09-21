@@ -162,8 +162,8 @@ export abstract class InitService {
                  .map((a) => a.code)
     );
 
-    // Load the default language from the config file
-    // translate.setDefaultLang(environment.defaultLanguage);
+    // Fall back to the configured default for untranslated interface labels.
+    this.translate.setDefaultLang(environment.defaultLanguage);
 
     this.localeService.setCurrentLanguageCode();
   }

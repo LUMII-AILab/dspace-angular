@@ -1,7 +1,7 @@
 <div>
   <fieldset class="d-flex">
     <legend *ngIf="!model.repeatable" [id]="'legend_' + model.id" [ngClass]="[getClass('element', 'label'), getClass('grid', 'label')]">
-      {{model.placeholder}} <span *ngIf="model.required">*</span>
+      {{model.placeholder | translate}} <span *ngIf="model.required">*</span>
     </legend>
     <ds-number-picker
       tabindex="0"

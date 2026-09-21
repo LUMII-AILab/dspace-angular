@@ -13,7 +13,7 @@
            [navigation]="model.getAdditional('navigation', config['navigation'])"
            [ngClass]="getClass('element', 'control')"
            [outsideDays]="model.getAdditional('outsideDays', config['outsideDays'])"
-           [placeholder]="model.placeholder"
+           [placeholder]="model.placeholder | translate"
            [placement]="model.getAdditional('placement', 'bottom-left')"
            [weekdays]="model.getAdditional('showWeekdays', config['showWeekdays'])"
            [showWeekNumbers]="model.getAdditional('showWeekNumbers', config['showWeekNumbers'])"
