@@ -1,2 +1,3 @@
 __pycache__/
 image/inputs.json
+!image/pm2/package-lock.json
