@@ -10,9 +10,10 @@ PROXY = "nginx@sha256:dc5069ad14f19660b141b21236140b91656bf89bbc3e2417c70ae650cd
 
 
 def run(*args, **kw):
-    return subprocess.run(
-        args, check=True, capture_output=True, text=True, **kw
-    ).stdout.strip()
+    result = subprocess.run(args, capture_output=True, text=True, **kw)
+    if result.returncode:
+        raise RuntimeError(f"Fixture command failed ({args[0]}): {result.stderr[-2000:]}")
+    return result.stdout.strip()
 
 
 parser = argparse.ArgumentParser(description=__doc__)
@@ -71,8 +72,6 @@ with tempfile.TemporaryDirectory(prefix="clarin-test-") as d:
     os.chmod(p / "tls.key", 0o644)  # Disposable, self-signed test material only.
     name = "clarin-m07-smoke-" + uuid.uuid4().hex[:10]
     containers = []
-    run("docker", "network", "create", "--internal", name)
-    run("docker", "network", "create", name + "-ingress")
 
     def start(suffix, image, args, mounts=(), extra=()):
         n = name + "-" + suffix
@@ -96,11 +95,19 @@ with tempfile.TemporaryDirectory(prefix="clarin-test-") as d:
         for source, target in mounts:
             cmd += ["--mount", f"type=bind,source={source},target={target},readonly"]
         cmd += list(extra) + [image] + list(args)
+        containers.append(n)  # Docker may create a stopped container before returning failure.
         run(*cmd)
-        containers.append(n)
         return n
 
     try:
+        # Let Docker choose a free subnet, then make it explicit before attaching
+        # containers. Engines requiring configured IPAM can then reserve the old
+        # proxy address during the DNS-recovery check without hardcoded ranges.
+        run("docker", "network", "create", "--internal", name)
+        subnet = json.loads(run("docker", "network", "inspect", name))[0]["IPAM"]["Config"][0]["Subnet"]
+        run("docker", "network", "rm", name)
+        run("docker", "network", "create", "--internal", "--subnet", subnet, name)
+        run("docker", "network", "create", name + "-ingress")
         mock = "require('http').createServer((q,s)=>{if(q.url.startsWith('/repository/server/api/pid/find')){s.writeHead(302,{Location:'https://repository.clarin.test/repository/server/api/core/items/mock?via=pid'});s.end();return;}s.setHeader('content-type','application/json');s.end(JSON.stringify({status:'UP',path:q.url,host:q.headers.host,proto:q.headers['x-forwarded-proto'],prefix:q.headers['x-forwarded-prefix']}));}).listen(8080,'0.0.0.0')"
         start("dspace", FRONT, ["-e", mock], extra=["--entrypoint", "node"])
         ui = start(
