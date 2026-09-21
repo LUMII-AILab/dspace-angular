@@ -32,8 +32,9 @@ const main = () => {
     // Configuration will be taken from transfer state during initialization
     return bootstrap();
   } else {
-    // Configuration must be fetched explicitly
-    return fetch('assets/config.json')
+    // Runtime configuration can change between deployments or local preview modes.
+    // Always fetch it fresh, even if an earlier SSR response was cacheable.
+    return fetch('assets/config.json', { cache: 'no-store' })
       .then((response) => response.json())
       .then((appConfig: AppConfig) => {
         // extend environment with app config for browser when not prerendered
@@ -46,7 +47,7 @@ const main = () => {
 function addMatomoStatistics() {
   (window as any)._paq = (window as any)._paq || [];
 
-  void fetch('assets/config.json')
+  void fetch('assets/config.json', { cache: 'no-store' })
     .then((response) => response.json())
     .then((config) => {
       const matomoConfig = config.matomo;

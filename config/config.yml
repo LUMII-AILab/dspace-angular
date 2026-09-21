@@ -106,7 +106,7 @@ cache:
 #  # Whether the privacy statement should exist or not.
 #  enablePrivacyStatement: false
 
-# Allow only EN and CS languages
+# Enable English and Latvian
 languages:
   - code: en
     label: English
@@ -116,7 +116,7 @@ languages:
     active: false
   - code: cs
     label: Čeština
-    active: true
+    active: false
   - code: de
     label: Deutsch
     active: false
@@ -131,7 +131,7 @@ languages:
     active: false
   - code: lv
     label: Latviešu
-    active: false
+    active: true
   - code: hu
     label: Magyar
     active: false

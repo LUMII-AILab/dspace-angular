@@ -14,7 +14,7 @@
          [ngbTypeahead]="search"
          [inputFormatter]="formatter"
          [resultTemplate]="rt"
-         [placeholder]="model.placeholder"
+         [placeholder]="model.placeholder | translate"
          [readonly]="model.readOnly"
          [type]="model.inputType"
          (blur)="onBlur($event)"
