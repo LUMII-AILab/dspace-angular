@@ -26,10 +26,11 @@ def publish(record, evidence=Path('output/evidence')):
 
     release = find_release()
     if release is None:
-        command('release', 'create', version, '-R', repo, '--draft', '--target', record['source'],
-                '--title', version, '--notes',
-                'Exact-image checks passed. Synthetic rehearsal only; scan findings remain report-only.')
-        release = find_release()
+        # Use the creation response: listing immediately afterward can be stale.
+        release = json.loads(command('api', '--method', 'POST', f'repos/{repo}/releases',
+                '-f', f'tag_name={version}', '-f', f'target_commitish={record["source"]}',
+                '-f', f'name={version}', '-F', 'draft=true', '-f',
+                'body=Exact-image checks passed. Synthetic rehearsal only; scan findings remain report-only.'))
     assert release and release['tag_name'] == version
     assert release['target_commitish'] == record['source'], 'Release target changed'
     names = {asset['name'] for asset in release['assets']}

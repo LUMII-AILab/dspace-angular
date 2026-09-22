@@ -12,8 +12,8 @@ publisher versions. Source revision and package/lock hashes are derived from the
 checked-out commit; `image/inputs.json` is generated. The source context is a Git
 archive without submodule contents. Frozen dependency installation and persistent
 BuildKit `gha` cache retain dependency layers; PRs only read the trusted cache.
-A PR build and a mainline build validate different commits. Warm-cache speed is
-not established until real runs measure it.
+A PR build and a mainline build validate different commits. The first mainline run
+populates the cache; measure later runs before claiming a warm-cache speedup.
 
 ## Activation and retries
 
@@ -23,8 +23,10 @@ access and Actions access for `LUMII-AILab/dspace-angular`. Grant the app reposi
 write access through the package's **Manage Actions access**, preserving the existing
 package/reader. Do not delete/recreate the package or change visibility.
 Then set repository variable `CLARIN_RELEASE_PUBLISH_ENABLED=true`. The one-time
-switch is separate from the automatic per-merge flow. The current CLI cannot inspect
-package permissions (missing `read:packages`); this review/activation remains pending.
+switch is separate from the automatic per-merge flow. Activation was completed on
+2026-09-21 after owner confirmation and independent private-package/reader checks.
+The ordinary CLI token lacks `read:packages`; do not interpret that token's 403 as
+a package visibility or deployment-reader failure.
 See [GitHub package access](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
 
 Merge/push and workflow execution require their own requested publication scope.

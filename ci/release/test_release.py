@@ -163,6 +163,31 @@ bash "$PUBLISHER"
                 state['assets']['release.json']=b'changed'
                 with self.assertRaises(AssertionError): publish_report.publish(record,root)
 
+    def test_new_draft_uses_creation_response_when_release_list_is_stale(self):
+        import publish_report
+        with tempfile.TemporaryDirectory() as d:
+            root=Path(d)
+            (root/'release.json').write_text('{"verified":true}')
+            record=dict(repository='owner/app',version='sha-'+'a'*40,source='a'*40)
+            calls=[]
+            def gh(*args):
+                calls.append(args)
+                if args[:2]==('api','--paginate'): return ''  # Listing remains stale.
+                if args[:3]==('api','--method','POST'):
+                    self.assertIn('draft=true',args)
+                    return json.dumps(dict(id=1,tag_name=record['version'],
+                                           target_commitish=record['source'],draft=True,assets=[]))
+                if args[:2]==('release','download'):
+                    (Path(args[-1])/'release.json').write_bytes((root/'release.json').read_bytes())
+                if args[0]=='api' and '/commits/' in args[1]:
+                    return json.dumps({'sha':record['source']})
+                return ''
+            with patch.object(publish_report,'command',side_effect=gh):
+                publish_report.publish(record,root)
+            self.assertEqual(sum(c[:2]==('api','--paginate') for c in calls),1)
+            self.assertTrue(any(c[:2]==('release','upload') for c in calls))
+            self.assertTrue(any(c[:2]==('release','edit') for c in calls))
+
     def test_workflow_qualifies_before_publishing_without_private_checkout(self):
         workflow=(ROOT/'.github/workflows/clarin-release.yml').read_text()
         build,publish=workflow.split('\n  publish:\n')
