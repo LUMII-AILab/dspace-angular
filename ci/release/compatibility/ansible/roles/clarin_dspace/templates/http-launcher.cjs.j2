@@ -1,0 +1,22 @@
+// Public HTTPS is terminated by Nginx; this listener stays on the private network.
+'use strict';
+const { app } = require('/app/dist/server/main.js');
+const server = app().listen(4000, '0.0.0.0');
+const sockets = new Set();
+server.on('connection', socket => {
+  sockets.add(socket);
+  socket.on('close', () => sockets.delete(socket));
+});
+let stopping = false;
+function shutdown() {
+  if (stopping) return;
+  stopping = true;
+  server.close(() => process.exit(0));
+  if (server.closeIdleConnections) server.closeIdleConnections();
+  setTimeout(() => {
+    for (const socket of sockets) socket.destroy();
+    process.exit(0);
+  }, 20000).unref();
+}
+process.on('SIGINT', shutdown);
+process.on('SIGTERM', shutdown);

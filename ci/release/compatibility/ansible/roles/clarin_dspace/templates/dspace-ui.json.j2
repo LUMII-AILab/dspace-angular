@@ -1,0 +1,14 @@
+{
+  "apps": [{
+    "name": "dspace-ui",
+    "cwd": "/app",
+    "script": "/app/config/http-launcher.cjs",
+    "instances": 1,
+    "exec_mode": "fork",
+    "node_args": "--max-old-space-size=1024",
+    "max_memory_restart": "1500M",
+    "time": true,
+    "kill_timeout": 25000,
+    "env": {"NODE_ENV": "production"}
+  }]
+}

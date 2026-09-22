@@ -1,0 +1,6 @@
+{
+  "name": "clarin-frontend-process-manager",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {"pm2": "7.0.3"}
+}

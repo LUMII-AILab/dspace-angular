@@ -1,0 +1,19 @@
+{
+  "source_repository": "https://github.com/LUMII-AILab/dspace-angular.git",
+  "source_baseline": "d4868c36a89430f68a84a0b8a98fe67b5b9edd36",
+  "platform": "linux/amd64",
+  "image": "ghcr.io/lumii-ailab/dspace-angular",
+  "node_image": "docker.io/library/node@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e",
+  "node_amd64_manifest": "sha256:929b04d7c782f04f615cf785488fed452b6569f87c73ff666ad553a7554f0006",
+  "node_version": "18.20.8",
+  "yarn_version": "1.22.22",
+  "pm2_version": "7.0.3",
+  "apk_packages": "python3=3.12.14-r0 make=4.4.1-r2 g++=14.2.0-r4",
+  "buildx_version": "v0.37.0",
+  "buildkit_image": "moby/buildkit@sha256:ddd1ca44b21eda906e81ab14a3d467fa6c39cd73b9a39df1196210edcb8db59e",
+  "sbom_generator": "docker/buildkit-syft-scanner@sha256:ae4f3b554449e7e25548e7d8ccc029d17357348e30c6e3df01b92bc93654d6a9",
+  "skopeo_image": "quay.io/skopeo/stable@sha256:47853bb9fb24202af9110531ebd6e43c5f97701254ca290596640290d17942f4",
+  "trivy_url": "https://github.com/aquasecurity/trivy/releases/download/v0.74.0/trivy_0.74.0_Linux-64bit.tar.gz",
+  "trivy_sha256": "2ae6fe3ee734b7fdf11335663e18c75ea12dccc76062f09f164a3b0f8be4371a",
+  "compatibility_revision": "8a250e4e577d9704eac6e813448b0a0106aae396"
+}

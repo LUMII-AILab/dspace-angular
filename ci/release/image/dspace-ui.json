@@ -1,0 +1,13 @@
+{
+  "apps": [{
+    "name": "dspace-ui",
+    "cwd": "/app",
+    "script": "dist/server/main.js",
+    "instances": 1,
+    "exec_mode": "fork",
+    "node_args": "--max-old-space-size=1024",
+    "max_memory_restart": "1500M",
+    "time": true,
+    "env": {"NODE_ENV": "production"}
+  }]
+}
