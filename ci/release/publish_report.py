@@ -53,4 +53,5 @@ if __name__ == '__main__':
     publish(record)
     with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
         summary.write(f"Published [{record['version']}](https://github.com/{record['repository']}/releases/tag/{record['version']}) "
-                      f"at `{record['image']}@{record['digest']}`. No target deployment.\n")
+                      f"at `{record['image']}@{record['digest']}`. No target deployment.\n\n"
+                      f"From the ops checkout: `make release-select COMPONENT=frontend VERSION={record['version']}`. Selection does not deploy.\n")

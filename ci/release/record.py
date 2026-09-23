@@ -40,4 +40,4 @@ with open(os.environ['GITHUB_STEP_SUMMARY'], 'a') as summary:
     summary.write(f"Frontend `{record['version']}`\n\n`{record['image']}@{record['digest']}`\n\n"
                   'Configuration, OCI provenance/SBOM and exact-image HTTPS checks passed. '
                   'Scan reports retained; report-only synthetic policy, no production acceptance.\n\n'
-                  f"After publication: `make release-select VERSION={record['version']}`.\n")
+                  f"After publication, from the ops checkout: `make release-select COMPONENT=frontend VERSION={record['version']}`. Selection does not deploy.\n")
