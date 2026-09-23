@@ -22,8 +22,25 @@ def require(condition, message):
         raise ValueError(message)
 
 
+def compatibility_manifest(root=ROOT / "ci/release/compatibility"):
+    data = json.loads((root / "manifest.json").read_text())
+    require(data.get("repository") == "LUMII-AILab/clarin-dspace-ops",
+            "Unexpected compatibility repository")
+    require(re.fullmatch(r"[a-f0-9]{40}", data.get("revision", "")),
+            "Invalid compatibility revision")
+    require(isinstance(data.get("files"), dict) and data["files"], "Missing compatibility files")
+    for name, digest in data["files"].items():
+        path = root / name
+        require(path.resolve().is_relative_to(root.resolve()) and path.is_file(),
+                "Missing or unsafe compatibility file: " + name)
+        require(hashlib.sha256(path.read_bytes()).hexdigest() == digest,
+                "Compatibility hash mismatch: " + name)
+    return data
+
+
 def inputs():
     data = json.loads((RECIPE / "toolchain.json").read_text())
+    data["compatibility_revision"] = compatibility_manifest()["revision"]
     data["source_revision"] = subprocess.check_output(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True).strip()
     for name, key in (("package.json", "source_package_sha256"),

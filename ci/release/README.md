@@ -56,8 +56,12 @@ Ops is private. `compatibility/manifest.json` identifies the immutable ops revis
 and SHA-256 of the four public frontend/proxy templates plus public paths vendored
 here. `compatibility/tests/render.yml` renders only these synthetic fixtures; it
 contains no target inventory, credential or private configuration. This avoids
-private repository credentials in app PR jobs. Update the compatibility revision,
-fixture hashes and ops release validator together when the contract changes.
+private repository credentials in app PR jobs. The fixture manifest is the single source of its revision and file hashes. Build
+inputs derive that revision and verify every listed file; publication checks that
+the retained release record matches it. Ops validates trusted release provenance
+and successful artifact checks without a second list of approved fixture commits.
+Update the manifest and fixture files together when changing the test contract;
+existing qualified release records remain valid for rollback.
 
 The HTTPS suite covers mock-backend routing, public configuration sanitization,
 forwarding/header rejection, DNS/TLS and restart behavior. It does not establish

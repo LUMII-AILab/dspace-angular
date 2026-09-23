@@ -12,7 +12,7 @@ import unittest
 from unittest.mock import patch
 
 import frontend_image as m
-from release_contract import validate, COMPATIBILITY
+from release_contract import validate
 
 ROOT=Path(__file__).resolve().parents[2]
 
@@ -63,10 +63,23 @@ class ReleaseTests(unittest.TestCase):
     def test_pinned_nonprivate_compatibility_files(self):
         root=ROOT/'ci/release/compatibility'
         manifest=json.loads((root/'manifest.json').read_text())
-        self.assertEqual(manifest['revision'],COMPATIBILITY)
+        self.assertEqual(manifest['revision'],m.inputs()['compatibility_revision'])
+        self.assertNotIn('compatibility_revision',json.loads((m.RECIPE/'toolchain.json').read_text()))
         for path,digest in manifest['files'].items():
             self.assertEqual(hashlib.sha256((root/path).read_bytes()).hexdigest(),digest,path)
         self.assertFalse((root/'ansible/inventories').exists())
+
+    def test_compatibility_manifest_rejects_changed_or_missing_files(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root=Path(directory); fixture=root/'fixture'; fixture.write_bytes(b'reviewed')
+            manifest=dict(repository='LUMII-AILab/clarin-dspace-ops',revision='a'*40,
+                          files={'fixture':hashlib.sha256(b'reviewed').hexdigest()})
+            (root/'manifest.json').write_text(json.dumps(manifest))
+            self.assertEqual(m.compatibility_manifest(root),manifest)
+            fixture.write_bytes(b'changed')
+            with self.assertRaisesRegex(ValueError,'hash mismatch'): m.compatibility_manifest(root)
+            fixture.unlink()
+            with self.assertRaisesRegex(ValueError,'Missing'): m.compatibility_manifest(root)
 
     def test_publisher_verifies_reports_bound_to_exact_loaded_image(self):
         from verify_record import verify
@@ -80,7 +93,7 @@ class ReleaseTests(unittest.TestCase):
                 reports[name]=hashlib.sha256(b'{}').hexdigest()
             record=dict(schema=1,repository='LUMII-AILab/dspace-angular',image=m.inputs()['image'],
                         version='sha-'+source,source=source,digest=digest,config_digest=config,
-                        compatibility_revision=COMPATIBILITY,workflow='.github/workflows/clarin-release.yml',
+                        compatibility_revision=m.inputs()['compatibility_revision'],workflow='.github/workflows/clarin-release.yml',
                         run_id=123,checks=dict(oci='passed',https='passed',configuration='passed'),
                         scan=dict(policy='synthetic-report-v1',disposition='report-only',production_accepted=False,reports=reports))
             (evidence/'release.json').write_text(json.dumps(record))
@@ -88,6 +101,9 @@ class ReleaseTests(unittest.TestCase):
             (evidence/'https.json').write_text(json.dumps(https))
             with patch.dict(os.environ,EXPECTED_DIGEST=digest,GITHUB_RUN_ID='123'):
                 self.assertEqual(verify(root),record)
+                (evidence/'release.json').write_text(json.dumps(record|{'compatibility_revision':'b'*40}))
+                with self.assertRaises(AssertionError): verify(root)
+                (evidence/'release.json').write_text(json.dumps(record))
                 for bad in (https|{'result':'failed'},https|{'frontend_config_digest':'sha256:'+'0'*64}):
                     (evidence/'https.json').write_text(json.dumps(bad))
                     with self.assertRaises(AssertionError): verify(root)

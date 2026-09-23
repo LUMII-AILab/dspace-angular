@@ -4,7 +4,6 @@ import re
 REPOSITORY = 'LUMII-AILab/dspace-angular'
 IMAGE = 'ghcr.io/lumii-ailab/dspace-angular'
 WORKFLOW = '.github/workflows/clarin-release.yml'
-COMPATIBILITY = '8a250e4e577d9704eac6e813448b0a0106aae396'
 
 
 def validate(record, reference=None):
@@ -14,13 +13,13 @@ def validate(record, reference=None):
     require(isinstance(record, dict) and record.get('schema') == 1, 'Invalid release schema')
     require(record.get('repository') == REPOSITORY and record.get('image') == IMAGE,
             'Unexpected release publisher/image')
-    for field, pattern in [('source', r'[a-f0-9]{40}'), ('digest', r'sha256:[a-f0-9]{64}'),
+    for field, pattern in [('source', r'[a-f0-9]{40}'),
+                           ('compatibility_revision', r'[a-f0-9]{40}'), ('digest', r'sha256:[a-f0-9]{64}'),
                            ('config_digest', r'sha256:[a-f0-9]{64}')]:
         require(isinstance(record.get(field), str) and re.fullmatch(pattern, record[field]),
                 'Invalid release ' + field)
     require(record.get('version') == 'sha-' + record['source'], 'Version/source mismatch')
     require(reference is None or reference == IMAGE + '@' + record['digest'], 'Release digest mismatch')
-    require(record.get('compatibility_revision') == COMPATIBILITY, 'Unreviewed compatibility fixture')
     require(record.get('workflow') == WORKFLOW and type(record.get('run_id')) is int
             and record['run_id'] > 0, 'Invalid workflow identity')
     require(record.get('checks') == {'oci': 'passed', 'https': 'passed', 'configuration': 'passed'},

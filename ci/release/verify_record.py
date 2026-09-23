@@ -10,7 +10,9 @@ from release_contract import validate
 
 def verify(root=Path('output')):
     record = validate(json.loads((root / 'evidence/release.json').read_text()))
-    assert record['source'] == inputs()['source_revision']
+    data = inputs()
+    assert record['source'] == data['source_revision']
+    assert record['compatibility_revision'] == data['compatibility_revision']
     assert record['digest'] == os.environ['EXPECTED_DIGEST']
     assert record['run_id'] == int(os.environ['GITHUB_RUN_ID'])
     identity = inspect_archive(root / 'frontend.oci.tar', record['digest'], root / 'evidence')
