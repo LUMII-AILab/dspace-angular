@@ -137,6 +137,13 @@ describe('LogInPasswordComponent', () => {
     expect(component.form instanceof UntypedFormGroup).toBe(true);
   });
 
+  it('explains account review without exposing identity details', () => {
+    (TestBed.inject(ActivatedRoute).snapshot as any).queryParams = { error: 'shibboleth-account-review-required' };
+    fixture.detectChanges();
+    expect(notificationService.error).toHaveBeenCalledWith('login.auth.review.title',
+      'login.auth.review.message', jasmine.anything());
+  });
+
   it('should authenticate', () => {
     fixture.detectChanges();
 

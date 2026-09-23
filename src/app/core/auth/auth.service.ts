@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@angular/core';
+import { Inject, Injectable, Optional } from '@angular/core';
 import { Router } from '@angular/router';
 import { HttpHeaders } from '@angular/common/http';
 
@@ -60,6 +60,9 @@ import { createSuccessfulRemoteDataObject$ } from '../../shared/remote-data.util
 import { PageInfo } from '../shared/page-info.model';
 import { followLink } from '../../shared/utils/follow-link-config.model';
 
+import { APP_CONFIG, AppConfig } from '../../../config/app-config.interface';
+import { safeLoginReturn } from './shibboleth-url';
+
 export const LOGIN_ROUTE = '/login';
 export const LOGOUT_ROUTE = '/logout';
 export const REDIRECT_COOKIE = 'dsRedirectUrl';
@@ -81,6 +84,7 @@ export class AuthService {
    * Timer to track time until token refresh
    */
   private tokenRefreshTimer;
+  private pendingShibbolethLogout = false;
 
   constructor(
     @Inject(NativeWindowService) protected _window: NativeWindowRef,
@@ -92,7 +96,8 @@ export class AuthService {
     protected store: Store<AppState>,
     protected hardRedirectService: HardRedirectService,
     protected notificationService: NotificationsService,
-    protected translateService: TranslateService
+    protected translateService: TranslateService,
+    @Optional() @Inject(APP_CONFIG) private appConfig: AppConfig = null
   ) {
     this.store.pipe(
       // when this service is constructed the store is not fully initialized yet
@@ -338,6 +343,8 @@ export class AuthService {
    * @returns {Observable<boolean>}
    */
   public logout(): Observable<boolean> {
+    this.pendingShibbolethLogout = false;
+    const wasShibboleth = this.getToken()?.authenticationMethod === 'shibboleth';
     // Send a request that sign end the session
     let headers = new HttpHeaders();
     headers = headers.append('Content-Type', 'application/x-www-form-urlencoded');
@@ -346,6 +353,7 @@ export class AuthService {
       map((rd: RemoteData<AuthStatus>) => {
         const status = rd.payload;
         if (hasValue(status) && !status.authenticated) {
+          this.pendingShibbolethLogout = wasShibboleth;
           return true;
         } else {
           throw (new Error('auth.errors.invalid-user'));
@@ -456,7 +464,13 @@ export class AuthService {
 
     // Set the cookie expire date
     const expires = new Date(expireDate);
-    const options: CookieAttributes = {expires: expires};
+    // The frontend reads this token to attach REST Authorization headers, so it
+    // cannot be HttpOnly. Prevent transport over HTTP when the UI uses HTTPS.
+    const options: CookieAttributes = {
+      expires,
+      secure: this.appConfig?.ui?.ssl === true || this._window.nativeWindow?.location?.protocol === 'https:',
+      sameSite: 'lax'
+    };
 
     // Save cookie with the token
     return this.storage.set(TOKENITEM, token, options);
@@ -516,6 +530,14 @@ export class AuthService {
    * Refresh route navigated
    */
   public refreshAfterLogout() {
+    if (this.pendingShibbolethLogout && this.appConfig) {
+      this.pendingShibbolethLogout = false;
+      const origin = this.hardRedirectService.getCurrentOrigin();
+      const url = new URL('/Shibboleth.sso/Logout', origin);
+      url.searchParams.set('return', safeLoginReturn('/', origin, this.appConfig.ui.nameSpace));
+      this.hardRedirectService.redirect(url.href);
+      return;
+    }
     this.navigateToRedirectUrl(undefined);
   }
 

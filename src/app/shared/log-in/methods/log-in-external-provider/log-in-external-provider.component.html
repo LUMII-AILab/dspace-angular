@@ -1,3 +1,5 @@
-<button class="btn btn-lg btn-primary btn-block text-white" (click)="redirectToExternalProvider()" role="button" tabindex="0">
-  <i class="fas fa-sign-in-alt"></i> {{getButtonLabel() | translate}}
+<p *ngIf="isShibboleth()">{{ 'login.institution.help' | translate }}</p>
+<button type="button" class="btn btn-lg btn-primary btn-block text-white" (click)="redirectToExternalProvider()">
+  <i class="fas fa-sign-in-alt" aria-hidden="true"></i> {{getButtonLabel() | translate}}
 </button>
+<p *ngIf="loginUnavailable" role="alert" class="text-danger mt-2">{{ 'login.institution.unavailable' | translate }}</p>

@@ -1,9 +1,9 @@
 {
   "repository": "LUMII-AILab/clarin-dspace-ops",
-  "revision": "8a250e4e577d9704eac6e813448b0a0106aae396",
+  "revision": "a492d0b786ca92799f36ef468015902d0fe34924",
   "files": {
-    "ansible/roles/clarin_dspace/templates/nginx.conf.j2": "1c853ab8e21d2ba388f109fed8b177ebc69b56f9b0827e584bae183eabc92ee7",
-    "ansible/roles/clarin_dspace/templates/config.prod.yml.j2": "0e9937f2bde94c8c4b5224738ca7c4783b809e7812b68eb778bdc6037ebceb23",
+    "ansible/roles/clarin_dspace/templates/nginx.conf.j2": "2dee9697fe7a70b4864b7e73c95b97f396b8511aa12c667c2a4b26c21303fa4e",
+    "ansible/roles/clarin_dspace/templates/config.prod.yml.j2": "619bfcad714c833b40de63c2fbd2a19ebf08ee519349cc341a4a25f2789a2fb1",
     "ansible/roles/clarin_dspace/templates/dspace-ui.json.j2": "7498eb3affd1d5a41785f70acda036a8f44fc83adc17933ba8794f4c0d51f67c",
     "ansible/roles/clarin_dspace/templates/http-launcher.cjs.j2": "5c473f3e23fbca32909125405062403b377e7ffe9f2886f092755a653799742a",
     "ansible/vars/public-paths.yml": "90adeaf1e3003b1b555dead3c3d7a1d64faf2f1f324c0974d65a4c1cb76d6565"

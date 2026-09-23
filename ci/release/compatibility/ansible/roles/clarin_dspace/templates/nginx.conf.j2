@@ -1,4 +1,4 @@
-# Rehearsal HTTPS ingress. No Docker socket, caching, or content mounts.
+# Runtime HTTPS ingress. No Docker socket, caching, or content mounts.
 worker_processes 1;
 pid /tmp/nginx.pid;
 error_log /dev/stderr warn;
@@ -10,6 +10,8 @@ http {
     log_format minimal '$time_iso8601 $request_method $status $body_bytes_sent $request_time';
     access_log /dev/stdout minimal;
     server_tokens off;
+    underscores_in_headers off;
+    ignore_invalid_headers on;
     resolver 127.0.0.11 valid=5s ipv6=off;
     resolver_timeout 5s;
 
@@ -32,6 +34,26 @@ http {
     }
 {% endif %}
 
+{% if clarin_auth_enabled | default(false) | bool %}
+    upstream shibboleth {
+        zone shibboleth 64k;
+        server shibboleth:8080 resolve;
+    }
+{% if clarin_auth_test_idp | default(false) | bool %}
+    upstream test_idp {
+        zone test_idp 64k;
+        server test-idp:8081 resolve;
+    }
+{% endif %}
+    # Raw query values are encoded once by the native frontend. Accept only our
+    # complete HTTPS origin and UI path, not hostname-only backend validation.
+    map $arg_redirectUrl $auth_return_allowed {
+        default 0;
+        "" 1;
+        ~*^{{ (clarin_public_origin + clarin_ui_prefix) | regex_escape }}(?:/|\?|$) 1;
+        ~*^{{ ((clarin_public_origin + clarin_ui_prefix) | urlencode | replace('/', '%2F')) | regex_escape }}(?:%2F|%3F|$) 1;
+    }
+{% endif %}
     # Stream transfers; do not spool repository content to the proxy filesystem.
     proxy_http_version 1.1;
 {% if clarin_development | default(false) | bool %}
@@ -55,9 +77,23 @@ http {
     proxy_set_header X-Real-IP "";
     proxy_set_header Remote-User "";
     proxy_set_header Shib-Session-ID "";
-    proxy_set_header Eppn "";
-    proxy_set_header Mail "";
-    proxy_set_header Uid "";
+    proxy_set_header Shib-Identity-Provider "";
+    proxy_set_header Shib-Application-ID "";
+    proxy_set_header Shib-Authentication-Instant "";
+    proxy_set_header Shib-Authentication-Method "";
+    proxy_set_header Shib-AuthnContext-Class "";
+    proxy_set_header eppn "";
+    proxy_set_header persistent-id "";
+    proxy_set_header targeted-id "";
+    proxy_set_header mail "";
+    proxy_set_header uid "";
+    proxy_set_header givenName "";
+    proxy_set_header sn "";
+    proxy_set_header cn "";
+    proxy_set_header entitlement "";
+    proxy_set_header affiliation "";
+    proxy_set_header unscoped-affiliation "";
+    proxy_set_header verification-token "";
     proxy_request_buffering off;
     proxy_buffering off;
     proxy_cache off;
@@ -82,7 +118,7 @@ http {
         {{ clarin_public_host | default('repository.clarin.test') }}:80 1;
         {{ clarin_public_host | default('repository.clarin.test') }}:{{ clarin_public_port | default(443) }} 1;
     }
-    map "$http_remote_user$http_shib_session_id$http_eppn$http_mail$http_uid" $identity_spoof {
+    map "$http_remote_user$http_shib_session_id$http_shib_identity_provider$http_shib_application_id$http_shib_authentication_instant$http_shib_authentication_method$http_shib_authncontext_class$http_eppn$http_persistent_id$http_targeted_id$http_mail$http_uid$http_givenname$http_sn$http_cn$http_entitlement$http_affiliation$http_unscoped_affiliation$http_verification_token" $identity_spoof {
         default 1;
         "" 0;
     }
@@ -100,6 +136,13 @@ http {
         ssl_protocols TLSv1.2 TLSv1.3;
         if ($known_host = 0) { return 444; }
         if ($identity_spoof = 1) { return 403; }
+{% if clarin_auth_test_idp | default(false) | bool %}
+        # Local synthetic identity UI only; the service has no external network.
+        location ^~ /__test-idp/ {
+            proxy_pass http://test_idp;
+            client_max_body_size 64k;
+        }
+{% endif %}
 {% if clarin_dspace_anubis_enabled | default(false) | bool %}
         # Tomcat path parameters must not bypass the normalized discovery match.
         if ($uri ~* "^{{ clarin_rest_prefix }}(?:/.*)?;") { return 400; }
@@ -163,6 +206,22 @@ http {
             proxy_pass http://backend;
         }
 {% endif %}
+{% if clarin_auth_enabled | default(false) | bool %}
+        # Protocol handlers never receive an Anubis challenge or discarded POST.
+        location ^~ /Shibboleth.sso/ {
+            proxy_pass http://shibboleth;
+            add_header Cache-Control "no-store" always;
+            add_header Referrer-Policy "no-referrer" always;
+        }
+        location = {{ clarin_rest_prefix }}/api/authn/shibboleth {
+            if ($auth_return_allowed = 0) { return 400; }
+            proxy_pass http://shibboleth;
+            add_header Cache-Control "no-store" always;
+            add_header Referrer-Policy "no-referrer" always;
+        }
+{% endif %}
+        # Only the exact SP-protected callback may reach this authentication filter.
+        location ~* ^{{ clarin_rest_prefix }}/api/authn/shibboleth { return 404; }
         # Explicit browser-only compatibility routes; never replay legacy writes.
         location = / {
             if ($request_method !~ ^(GET|HEAD)$) { return 405; }

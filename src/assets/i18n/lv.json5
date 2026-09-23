@@ -1,4 +1,6 @@
 {
+  "login.institution.unavailable": "Pieslēgšanās ar iestādes kontu nav pieejama. Izmantojiet lokālo kontu vai sazinieties ar atbalsta dienestu.",
+  "login.institution.help": "Izvēlieties savu iestādi CLARIN iestāžu izvēles lapā (angļu valodā). Varat arī izmantot savu lokālo repozitorija kontu.",
   // "401.help": "You're not authorized to access this page. You can use the button below to get back to the home page.",
   "401.help": "Jums nav atļauts piekļūt šai lapai. Izmantojiet zemāk esošo pogu, lai atgrieztos sākumlapā.",
 
@@ -4982,7 +4984,7 @@
   "login.form.password": "Parole",
 
   // "login.form.shibboleth": "Log in with Shibboleth",
-  "login.form.shibboleth": "Pieslēgties ar Shibboleth",
+  "login.form.shibboleth": "Pieslēgties ar iestādes kontu",
 
   // "login.form.submit": "Log in",
   "login.form.submit": "Pieslēgties",
@@ -9631,6 +9633,9 @@
   "login.form.or-divider": "vai",
 
   // "login.auth.failed.shibboleth.title": "Shibboleth authentication failed",
+  "login.auth.review.title": "Jāpārbauda pieslēgšanās ar iestādes kontu",
+  "login.auth.review.message": "Šo iestādes identitāti neizdevās sasaistīt ar esošu repozitorija kontu. Pieslēdzieties ar savu esošo kontu vai sazinieties ar repozitorija atbalsta dienestu. Konti netika sasaistīti vai izveidoti.",
+
   "login.auth.failed.shibboleth.title": "Shibboleth autentifikācija neizdevās",
 
   // "login.auth.failed.shibboleth.message": "Authentication failed because your IDP did not send the required Shibboleth headers. Please contact the Help Desk by email: {{ email }} .",

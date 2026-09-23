@@ -1,3 +1,5 @@
+import { APP_CONFIG, AppConfig } from '../../../../../config/app-config.interface';
+import { shibbolethLoginUrl } from '../../../../core/auth/shibboleth-url';
 import { Component, Inject, OnInit, } from '@angular/core';
 
 import { Observable } from 'rxjs';
@@ -43,6 +45,8 @@ export class LogInExternalProviderComponent implements OnInit {
    * @type {string}
    */
   public location: string;
+  public loginUnavailable = false;
+  public isShibboleth = () => this.authMethod.authMethodType === AuthMethodType.Shibboleth;
 
   /**
    * Whether user is authenticated.
@@ -65,7 +69,8 @@ export class LogInExternalProviderComponent implements OnInit {
     @Inject(NativeWindowService) protected _window: NativeWindowRef,
     private authService: AuthService,
     private hardRedirectService: HardRedirectService,
-    private store: Store<CoreState>
+    private store: Store<CoreState>,
+    @Inject(APP_CONFIG) private appConfig: AppConfig
   ) {
     this.authMethod = injectedAuthMethodModel;
   }
@@ -78,7 +83,8 @@ export class LogInExternalProviderComponent implements OnInit {
     this.loading = this.store.pipe(select(isAuthenticationLoading));
 
     // set location
-    this.location = decodeURIComponent(this.injectedAuthMethodModel.location);
+    this.location = this.authMethod.authMethodType === AuthMethodType.Shibboleth
+      ? this.injectedAuthMethodModel.location : decodeURIComponent(this.injectedAuthMethodModel.location);
 
   }
 
@@ -91,6 +97,16 @@ export class LogInExternalProviderComponent implements OnInit {
         redirectRoute = this.hardRedirectService.getCurrentRoute();
       } else if (isEmpty(redirectRoute)) {
         redirectRoute = '/';
+      }
+      if (this.isShibboleth()) {
+        try {
+          const url = shibbolethLoginUrl(this.location, this._window.nativeWindow.origin,
+            this.appConfig.ui.nameSpace, this.appConfig.rest.nameSpace, redirectRoute);
+          this.hardRedirectService.redirect(url);
+        } catch {
+          this.loginUnavailable = true;
+        }
+        return;
       }
       const correctRedirectUrl = new URLCombiner(this._window.nativeWindow.origin, redirectRoute).toString();
 

@@ -24,14 +24,12 @@ import { ActivatedRoute , Router} from '@angular/router';
 import { getBaseUrl } from '../../../clarin-shared-util';
 import { ConfigurationProperty } from '../../../../core/shared/configuration-property.model';
 import { ConfigurationDataService } from '../../../../core/data/configuration-data.service';
-import { CookieService } from '../../../../core/services/cookie.service';
 import { NotificationsService } from '../../../notifications/notifications.service';
 import { TranslateService } from '@ngx-translate/core';
 import { NotificationOptions } from '../../../notifications/models/notification-options.model';
 import { HELP_DESK_PROPERTY } from '../../../../item-page/tombstone/tombstone.component';
 import { getFirstSucceededRemoteDataPayload } from '../../../../core/shared/operators';
 
-export const SHOW_DISCOJUICE_POPUP_CACHE_NAME = 'SHOW_DISCOJUICE_POPUP';
 /**
  * /users/sign-in
  * @class LogInPasswordComponent
@@ -106,7 +104,6 @@ export class LogInPasswordComponent implements OnInit {
     private route: ActivatedRoute,
     protected router: Router,
     protected configurationService: ConfigurationDataService,
-    protected storage: CookieService,
     private notificationService: NotificationsService,
     private translateService: TranslateService
   ) {
@@ -119,7 +116,6 @@ export class LogInPasswordComponent implements OnInit {
    */
   public async ngOnInit() {
     this.checkIfHasLoginError();
-    this.initializeDiscoJuiceCache();
     this.redirectUrl = '';
     // set formGroup
     this.form = this.formBuilder.group({
@@ -149,7 +145,6 @@ export class LogInPasswordComponent implements OnInit {
 
     // Load `dspace.ui.url` into `baseUrl` property.
     await this.assignBaseUrl();
-    this.toggleDiscojuiceLogin();
     void this.setUpRedirectUrl();
   }
 
@@ -163,6 +158,11 @@ export class LogInPasswordComponent implements OnInit {
 
   private checkIfHasLoginError() {
     const loginError = this.route.snapshot.queryParams?.error;
+    if (loginError === 'shibboleth-account-review-required') {
+      this.notificationService.error(this.translateService.instant('login.auth.review.title'),
+        this.translateService.instant('login.auth.review.message'), new NotificationOptions(-1, true));
+      return;
+    }
     if (loginError !== 'shibboleth-authentication-failed') {
       return;
     }
@@ -183,34 +183,9 @@ export class LogInPasswordComponent implements OnInit {
    */
   public async setUpRedirectUrl() {
     const fetchedRedirectUrl = await firstValueFrom(this.authService.getRedirectUrl());
-    if (isNotEmpty(fetchedRedirectUrl)) {
-      // Bring over the item ID as a query parameter
-      const queryParams = { redirectUrl: fetchedRedirectUrl };
-      // Redirect to login with `redirectUrl` param because the redirectionUrl is lost from the store after click on
-      // `local` login.
-      void this.router.navigate(['login'], { queryParams: queryParams });
-    }
-
-    // Store the `redirectUrl` value from the url and then remove that value from url.
-    // Overwrite `this.redirectUrl` only if it's not stored in the authService `redirectUrl` property.
-    if (isEmpty(this.redirectUrl)) {
-      this.redirectUrl = this.route.snapshot.queryParams?.redirectUrl;
-    }
+    this.redirectUrl = fetchedRedirectUrl || this.route.snapshot.queryParams?.redirectUrl || '/';
   }
 
-
-  /**
-   * Toggle Discojuice login. Show it every time except the case when the user click
-   * on the `local` button in the discojuice box.
-   * @private
-   */
-  private toggleDiscojuiceLogin() {
-    // Popup cache is set to false in the `aai.js` when the user clicks on `local` button
-    if (this.storage.get(SHOW_DISCOJUICE_POPUP_CACHE_NAME) === true) {
-      this.popUpDiscoJuiceLogin();
-    }
-    this.storage.set(SHOW_DISCOJUICE_POPUP_CACHE_NAME, true);
-  }
 
   /**
    * Reset error or message.
@@ -239,7 +214,7 @@ export class LogInPasswordComponent implements OnInit {
 
     if (!this.isStandalonePage || isNotEmpty(this.redirectUrl)) {
       // Create a URLSearchParams object
-      const urlParams = new URLSearchParams(this.redirectUrl.split('?')[1]);
+      const urlParams = new URLSearchParams((this.redirectUrl || '/').split('?')[1]);
       // Get the value of the 'redirectUrl' parameter
       let redirectUrl = urlParams.get('redirectUrl');
       if (isEmpty(redirectUrl)) {
@@ -268,25 +243,4 @@ export class LogInPasswordComponent implements OnInit {
       });
   }
 
-  /**
-   * Show DiscoJuice login modal using javascript functions. The timeout must be set because of angular component
-   * lifecycle. Discojuice won't be showed up without timeout.
-   * @private
-   */
-  private popUpDiscoJuiceLogin() {
-    setTimeout(() => {
-      document?.getElementById('clarin-signon-discojuice')?.click();
-    }, 250);
-  }
-
-  /**
-   * Set SHOW_DISCOJUICE_POPUP_CACHE_NAME to true because the discojuice login must be popped up on init
-   * if it is loaded for the first time.
-   * @private
-   */
-  private initializeDiscoJuiceCache() {
-    if (isEmpty(this.storage.get(SHOW_DISCOJUICE_POPUP_CACHE_NAME))) {
-      this.storage.set(SHOW_DISCOJUICE_POPUP_CACHE_NAME, true);
-    }
-  }
 }

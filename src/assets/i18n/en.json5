@@ -1,4 +1,6 @@
 {
+  "login.institution.unavailable": "Institutional login is unavailable. Please use your local account or contact support.",
+  "login.institution.help": "Choose your institution on the CLARIN discovery page (in English). You can also use your local repository account on this page.",
   "401.help": "You're not authorized to access this page. You can use the button below to get back to the home page.",
 
   "401.link.home-page": "Take me to the home page",
@@ -2975,7 +2977,7 @@
 
   "login.form.password": "Password",
 
-  "login.form.shibboleth": "Log in with Shibboleth",
+  "login.form.shibboleth": "Log in through your institution",
 
   "login.form.submit": "Log in",
 
@@ -6146,6 +6148,9 @@
   "item.tombstone.replaced.help-desk.message": ["The author(s) asked us to hide this submission.", "We still keep all the data and metadata of the original submission but the submission", "is now located at the above url(s). If you need the contents of the original submission, contact us at our", "Help Desk."],
 
   "login.form.or-divider": "or",
+
+  "login.auth.review.title": "Institutional sign-in needs review",
+  "login.auth.review.message": "We could not match this institutional identity to an existing repository account. Use your existing account login or contact repository support. No accounts were linked or created.",
 
   "login.auth.failed.shibboleth.title": "Shibboleth authentication failed",
 

@@ -1,3 +1,4 @@
+import { APP_CONFIG } from '../../../config/app-config.interface';
 import { inject, TestBed, waitForAsync } from '@angular/core/testing';
 import { CommonModule } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -103,7 +104,8 @@ describe('AuthService test', () => {
     linkService = {
       resolveLinks: {}
     };
-    hardRedirectService = jasmine.createSpyObj('hardRedirectService', ['redirect']);
+    hardRedirectService = jasmine.createSpyObj('hardRedirectService', ['redirect', 'getCurrentOrigin']);
+    hardRedirectService.getCurrentOrigin.and.returnValue('https://repository.auth.test');
     spyOn(linkService, 'resolveLinks').and.returnValue({ authenticated: true, eperson: observableOf({ payload: {} }) });
 
   }
@@ -123,6 +125,7 @@ describe('AuthService test', () => {
         ],
         declarations: [],
         providers: [
+          { provide: APP_CONFIG, useValue: { ui: { nameSpace: "/repository/" } } },
           { provide: AuthRequestService, useValue: authRequest },
           { provide: NativeWindowService, useValue: window },
           { provide: REQUEST, useValue: {} },
@@ -139,6 +142,42 @@ describe('AuthService test', () => {
         ],
       });
       authService = TestBed.inject(AuthService);
+    });
+
+    it('marks the stored token Secure on an HTTPS UI', () => {
+      spyOnProperty(window, 'nativeWindow', 'get').and.returnValue({ location: { protocol: 'https:' } });
+      const cookies = jasmine.createSpyObj('cookies', ['set']);
+      (authService as any).storage = cookies;
+      authService.storeToken(token);
+      expect(cookies.set).toHaveBeenCalledWith('dsAuthInfo', token,
+        jasmine.objectContaining({ secure: true, sameSite: 'lax' }));
+    });
+
+    it('retains HTTP development compatibility when HTTPS is not configured', () => {
+      spyOnProperty(window, 'nativeWindow', 'get').and.returnValue({ location: { protocol: 'http:' } });
+      const cookies = jasmine.createSpyObj('cookies', ['set']);
+      (authService as any).storage = cookies;
+      authService.storeToken(token);
+      expect(cookies.set).toHaveBeenCalledWith('dsAuthInfo', token,
+        jasmine.objectContaining({ secure: false, sameSite: 'lax' }));
+    });
+
+    it('ends the SP session after a successful Shibboleth REST logout', () => {
+      spyOn(authService, 'getToken').and.returnValue({ authenticationMethod: 'shibboleth' } as AuthTokenInfo);
+      spyOn(authRequest, 'postToEndpoint').and.returnValue(createSuccessfulRemoteDataObject$({ authenticated: false }));
+      authService.logout().subscribe(() => authService.refreshAfterLogout());
+      const destination = new URL(hardRedirectService.redirect.calls.mostRecent().args[0]);
+      expect(destination.pathname).toBe('/Shibboleth.sso/Logout');
+      expect(destination.searchParams.get('return')).toBe('https://repository.auth.test/repository/');
+    });
+
+    it('keeps password logout independent of the SP', () => {
+      spyOn(authService, 'getToken').and.returnValue({ authenticationMethod: 'password' } as AuthTokenInfo);
+      spyOn(authRequest, 'postToEndpoint').and.returnValue(createSuccessfulRemoteDataObject$({ authenticated: false }));
+      spyOn(authService, 'navigateToRedirectUrl');
+      authService.logout().subscribe(() => authService.refreshAfterLogout());
+      expect(hardRedirectService.redirect).not.toHaveBeenCalled();
+      expect(authService.navigateToRedirectUrl).toHaveBeenCalledWith(undefined);
     });
 
     it('should return the authentication status object when user credentials are correct', () => {

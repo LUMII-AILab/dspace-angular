@@ -1,3 +1,5 @@
+import { of } from 'rxjs';
+import { APP_CONFIG } from '../../../../../config/app-config.interface';
 import { CUSTOM_ELEMENTS_SCHEMA } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
@@ -63,6 +65,7 @@ describe('LogInExternalProviderComponent', () => {
         LogInExternalProviderComponent
       ],
       providers: [
+        { provide: APP_CONFIG, useValue: { ui: { nameSpace: "/repository/" }, rest: { nameSpace: "/repository/server" } } },
         { provide: AuthService, useClass: AuthServiceStub },
         { provide: 'authMethodProvider', useValue: new AuthMethod(AuthMethodType.Orcid, 0, location) },
         { provide: 'isStandalonePage', useValue: true },
@@ -121,6 +124,31 @@ describe('LogInExternalProviderComponent', () => {
 
     expect(setHrefSpy).toHaveBeenCalledWith(currentUrl);
 
+  });
+
+  it('uses the SP discovery route and preserves a nested return exactly once', () => {
+    componentAsAny._window = { nativeWindow: { origin: 'https://repository.auth.test' } };
+    component.authMethod = new AuthMethod(AuthMethodType.Shibboleth, 0, '');
+    component.location = encodeURIComponent('https://repository.auth.test/Shibboleth.sso/Login?target=ignored');
+    spyOn(TestBed.inject(AuthService), 'getRedirectUrl').and.returnValue(of('/items/123?x=1&y=2'));
+    component.redirectToExternalProvider();
+    const login = new URL((hardRedirectService.redirect as jasmine.Spy).calls.mostRecent().args[0]);
+    const callback = new URL(login.searchParams.get('target'));
+    expect(login.pathname).toBe('/Shibboleth.sso/Login');
+    expect(callback.pathname).toBe('/repository/server/api/authn/shibboleth');
+    expect(callback.searchParams.get('redirectUrl')).toBe('https://repository.auth.test/repository/items/123?x=1&y=2');
+  });
+
+  it('shows an accessible failure instead of navigating to an untrusted SP', () => {
+    componentAsAny._window = { nativeWindow: { origin: 'https://repository.auth.test' } };
+    component.authMethod = new AuthMethod(AuthMethodType.Shibboleth, 0, '');
+    fixture.detectChanges();
+    component.location = 'https://evil.test/Shibboleth.sso/Login';
+    component.redirectToExternalProvider();
+    fixture.detectChanges();
+    expect(hardRedirectService.redirect).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('[role="alert"]')).toBeTruthy();
+    expect(fixture.nativeElement.querySelector('button[type="button"]')).toBeTruthy();
   });
 
 });
