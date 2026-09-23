@@ -3,7 +3,8 @@
 The CLARIN workflow validates PRs to `clarin-v7` without registry/deployment
 credentials. A mainline push builds one OCI artifact, verifies source identity,
 provenance and SBOM, scans the image and dependency locks, and qualifies that exact
-runtime image with disposable HTTPS fixtures. Publication copies that artifact
+runtime image with disposable HTTPS fixtures. Publication then waits for owner
+approval in `frontend-release` and copies that artifact
 without rebuilding, verifies the registry digest, then creates a GitHub release
 `sha-FULL_COMMIT` with small JSON reports. No server deployment runs in CI.
 
@@ -23,11 +24,19 @@ access and Actions access for `LUMII-AILab/dspace-angular`. Grant the app reposi
 write access through the package's **Manage Actions access**, preserving the existing
 package/reader. Do not delete/recreate the package or change visibility.
 Then set repository variable `CLARIN_RELEASE_PUBLISH_ENABLED=true`. The one-time
-switch is separate from the automatic per-merge flow. Activation was completed on
+switch enables the per-run owner-approval flow; it does not approve a release. Activation was completed on
 2026-09-21 after owner confirmation and independent private-package/reader checks.
 The ordinary CLI token lacks `read:packages`; do not interpret that token's 403 as
 a package visibility or deployment-reader failure.
 See [GitHub package access](https://docs.github.com/en/packages/learn-github-packages/configuring-a-packages-access-control-and-visibility).
+
+Configure `frontend-release` with the owner as required reviewer and a `clarin-v7`
+branch restriction before enabling publication. After a push's build and checks
+pass, open that run and choose **Review deployments → frontend-release → Approve
+and deploy**. GitHub uses a deployment label, but this job only publishes the
+already-tested image and release reports. It does not rebuild or deploy a server.
+Do not start another workflow to publish a waiting candidate. Optional manual
+dispatch starts a new build with the same approval gate; PRs cannot publish.
 
 Merge/push and workflow execution require their own requested publication scope.
 Verify a real PR run and a real mainline release before claiming the automation is

@@ -212,6 +212,7 @@ bash "$PUBLISHER"
         self.assertNotIn('contents: write',build)
         self.assertNotIn('repository: LUMII-AILab/clarin-dspace-ops',build)
         self.assertIn('needs: build',publish)
+        self.assertIn('environment: frontend-release',publish)
         self.assertIn("github.event_name != 'pull_request'",publish)
         self.assertIn('CLARIN_RELEASE_PUBLISH_ENABLED',publish)
         self.assertIn('test_https_runtime.py',build)
