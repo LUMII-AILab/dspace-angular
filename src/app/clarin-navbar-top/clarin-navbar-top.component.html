@@ -10,15 +10,18 @@
         <img src="./assets/images/lv.svg" width="18" height="12" alt="">
       </button>
     </div>
-    <div class="ml-auto pr-3" *ngIf="{ user: authenticatedUser$ | async } as state">
-      <div *ngIf="state.user == null" class="badge clarin-login-badge px-2 py-1">
+    <div class="ml-auto pr-3" *ngIf="session$ | async as state">
+      <div *ngIf="state.pending" class="clarin-session-pending" role="status">
+        <span class="sr-only">{{'loading.default' | translate}}</span>
+      </div>
+      <div *ngIf="!state.pending && state.user == null" class="badge clarin-login-badge px-2 py-1">
         <span>
           <a style="color: #FFF;" routerLink="/login" >
             <i class="fas fa-sign-in-alt pr-1 fa-lg" aria-hidden="true"></i>{{'login.title' | translate}}
           </a>
         </span>
       </div>
-      <div *ngIf="state.user != null" class="badge clarin-logout-badge px-2 py-1">
+      <div *ngIf="!state.pending && state.user != null" class="badge clarin-logout-badge px-2 py-1">
         <span>
           <a routerLink="/profile" style="color: #FFF;">
             <i class="fa fa-user pr-1 fa-lg" aria-hidden="true"></i>{{state.user.name}}
