@@ -1,6 +1,9 @@
 <ng-container *ngVar="(user$ | async) as user">
   <div class="container" *ngIf="user">
     <h1>{{'profile.title' | translate}}</h1>
+    <ds-alert *ngIf="!user.email" [type]="'alert-info'" data-test="missing-email">
+      {{ 'profile.email.missing' | translate }}
+    </ds-alert>
     <ng-container *ngIf="isResearcherProfileEnabled$ | async">
       <div class="card mb-4">
         <div class="card-header">{{'profile.card.researcher' | translate}}</div>

@@ -1,5 +1,6 @@
 {
-  "login.auth.attributes.message": "Your institution did not provide the required unambiguous identity details. A new account also requires an email address. Contact your institution or repository support. No account was created or linked.",
+  "profile.email.missing": "You can sign in with your institutional account without an email address. Before using features that require email, contact repository support to add and verify an address.",
+  "login.auth.attributes.message": "Your institution must provide an unambiguous federated identifier or email address. The received details were missing, invalid or conflicting. Contact your institution or repository support. No account was created or linked.",
   "login.auth.attributes.title": "Institutional details could not be verified",
   "login.institution.unavailable": "Institutional login is unavailable. Please use your local account or contact support.",
   "login.institution.help": "Choose your institution on the CLARIN discovery page (in English). Your first successful sign-in creates a repository account if there is no existing account conflict. You can also use your local repository account.",
