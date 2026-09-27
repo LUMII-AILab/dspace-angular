@@ -163,6 +163,11 @@ export class LogInPasswordComponent implements OnInit {
         this.translateService.instant('login.auth.review.message'), new NotificationOptions(-1, true));
       return;
     }
+    if (loginError === 'shibboleth-attributes-invalid') {
+      this.notificationService.error(this.translateService.instant('login.auth.attributes.title'),
+        this.translateService.instant('login.auth.attributes.message'), new NotificationOptions(-1, true));
+      return;
+    }
     if (loginError !== 'shibboleth-authentication-failed') {
       return;
     }

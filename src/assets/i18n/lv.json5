@@ -1,6 +1,8 @@
 {
+  "login.auth.attributes.message": "Iestāde nav sniegusi nepieciešamos nepārprotamos identitātes datus. Jauna konta izveidei nepieciešama arī e-pasta adrese. Sazinieties ar savu iestādi vai repozitorija atbalsta dienestu. Konts netika izveidots vai sasaistīts.",
+  "login.auth.attributes.title": "Neizdevās pārbaudīt iestādes sniegtos datus",
   "login.institution.unavailable": "Pieslēgšanās ar iestādes kontu nav pieejama. Izmantojiet lokālo kontu vai sazinieties ar atbalsta dienestu.",
-  "login.institution.help": "Izvēlieties savu iestādi CLARIN iestāžu izvēles lapā (angļu valodā). Varat arī izmantot savu lokālo repozitorija kontu.",
+  "login.institution.help": "Izvēlieties savu iestādi CLARIN iestāžu izvēles lapā (angļu valodā). Pirmajā veiksmīgajā pieslēgšanās reizē tiks izveidots repozitorija konts, ja nebūs konflikta ar esošu kontu. Varat arī izmantot lokālo repozitorija kontu.",
   // "401.help": "You're not authorized to access this page. You can use the button below to get back to the home page.",
   "401.help": "Jums nav atļauts piekļūt šai lapai. Izmantojiet zemāk esošo pogu, lai atgrieztos sākumlapā.",
 
@@ -9633,8 +9635,8 @@
   "login.form.or-divider": "vai",
 
   // "login.auth.failed.shibboleth.title": "Shibboleth authentication failed",
-  "login.auth.review.title": "Jāpārbauda pieslēgšanās ar iestādes kontu",
-  "login.auth.review.message": "Šo iestādes identitāti neizdevās sasaistīt ar esošu repozitorija kontu. Pieslēdzieties ar savu esošo kontu vai sazinieties ar repozitorija atbalsta dienestu. Konti netika sasaistīti vai izveidoti.",
+  "login.auth.review.title": "Nepieciešama palīdzība konta sasaistīšanai",
+  "login.auth.review.message": "Pieslēgšanos ar iestādes kontu neizdevās automātiski sasaistīt ar repozitorija kontu. Pieslēdzieties ar savu esošo kontu vai sazinieties ar repozitorija atbalsta dienestu, lai pārbaudītu konta piederību un sasaistītu pieslēgšanos ar iestādes kontu. Konti netika sasaistīti vai izveidoti. Pieslēgšanās ar lokālo kontu pati par sevi kontus nesasaista.",
 
   "login.auth.failed.shibboleth.title": "Shibboleth autentifikācija neizdevās",
 
