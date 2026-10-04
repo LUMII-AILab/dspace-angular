@@ -158,16 +158,6 @@ export class LogInPasswordComponent implements OnInit {
 
   private checkIfHasLoginError() {
     const loginError = this.route.snapshot.queryParams?.error;
-    if (loginError === 'shibboleth-account-review-required') {
-      this.notificationService.error(this.translateService.instant('login.auth.review.title'),
-        this.translateService.instant('login.auth.review.message'), new NotificationOptions(-1, true));
-      return;
-    }
-    if (loginError === 'shibboleth-attributes-invalid') {
-      this.notificationService.error(this.translateService.instant('login.auth.attributes.title'),
-        this.translateService.instant('login.auth.attributes.message'), new NotificationOptions(-1, true));
-      return;
-    }
     if (loginError !== 'shibboleth-authentication-failed') {
       return;
     }

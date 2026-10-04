@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { GetRequest, PostRequest } from '../../core/data/request.models';
 import {
-  getFirstCompletedRemoteData, getFirstSucceededRemoteData,
+  getFirstCompletedRemoteData,
   getFirstSucceededRemoteListPayload
 } from '../../core/shared/operators';
 import { ActivatedRoute } from '@angular/router';
@@ -122,7 +122,7 @@ export class AutoregistrationComponent implements OnInit {
     const response = this.rdbService.buildFromRequestUUID(requestId);
     // Process response
     response
-      .pipe(getFirstSucceededRemoteData())
+      .pipe(getFirstCompletedRemoteData())
       .subscribe(responseRD$ => {
         if (responseRD$.hasSucceeded) {
           // Call autologin
@@ -164,13 +164,12 @@ export class AutoregistrationComponent implements OnInit {
     this.requestService.send(postRequest);
     // Get response
     const response = this.rdbService.buildFromRequestUUID(requestId);
-    response.pipe(getFirstSucceededRemoteData())
+    response.pipe(getFirstCompletedRemoteData())
       .subscribe(responseRD$ => {
         if (responseRD$.hasSucceeded) {
           const token = Object.values(responseRD$?.payload).join('');
           const authToken = new AuthTokenInfo(token);
           this.store.dispatch(new AuthenticatedAction(authToken));
-          this.deleteVerificationToken();
           // Use hard redirect to load all components from the beginning as the logged-in user. Because some components
           // are not loaded correctly when the user is logged in e.g., `log in` button is still visible instead of
           // log out button.
@@ -185,21 +184,12 @@ export class AutoregistrationComponent implements OnInit {
   }
 
   /**
-   * After every successful registration and login delete the verification token.
-   */
-  private deleteVerificationToken() {
-    this.verificationTokenService.delete(this.verificationToken$.value.id)
-      .pipe(getFirstCompletedRemoteData());
-  }
-
-  /**
    * Retrieve the `ClarinVerificationToken` object by the `verificationToken` value.
    */
   private loadVerificationToken() {
     this.verificationTokenService.searchBy('byToken', this.createSearchOptions(this.verificationToken))
       .pipe(getFirstSucceededRemoteListPayload())
       .subscribe(res => {
-        console.log('res', res);
         if (isEmpty(res?.[0])) {
           return;
         }

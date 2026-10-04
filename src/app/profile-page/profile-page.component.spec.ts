@@ -86,15 +86,6 @@ describe('ProfilePageComponent', () => {
     });
   }
 
-  it('explains deferred email completion only for accounts without email', () => {
-    configurationService.findByPropertyName.and.returnValue(createSuccessfulRemoteDataObject$(validConfiguration));
-    fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('[data-test="missing-email"]'))).toBeTruthy();
-    user.email = 'verified@example.test';
-    fixture.detectChanges();
-    expect(fixture.debugElement.query(By.css('[data-test="missing-email"]'))).toBeNull();
-  });
-
   beforeEach(waitForAsync(() => {
     init();
     TestBed.configureTestingModule({

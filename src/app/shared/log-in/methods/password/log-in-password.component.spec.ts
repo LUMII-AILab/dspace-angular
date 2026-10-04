@@ -137,20 +137,6 @@ describe('LogInPasswordComponent', () => {
     expect(component.form instanceof UntypedFormGroup).toBe(true);
   });
 
-  it('explains account review without exposing identity details', () => {
-    (TestBed.inject(ActivatedRoute).snapshot as any).queryParams = { error: 'shibboleth-account-review-required' };
-    fixture.detectChanges();
-    expect(notificationService.error).toHaveBeenCalledWith('login.auth.review.title',
-      'login.auth.review.message', jasmine.anything());
-  });
-
-  it('explains missing or conflicting institutional details separately from recovery', () => {
-    (TestBed.inject(ActivatedRoute).snapshot as any).queryParams = { error: 'shibboleth-attributes-invalid' };
-    fixture.detectChanges();
-    expect(notificationService.error).toHaveBeenCalledWith('login.auth.attributes.title',
-      'login.auth.attributes.message', jasmine.anything());
-  });
-
   it('should authenticate', () => {
     fixture.detectChanges();
 

@@ -1,7 +1,4 @@
 {
-  "profile.email.missing": "Varat pieslēgties ar iestādes kontu arī bez e-pasta adreses. Pirms izmantojat iespējas, kurām vajadzīgs e-pasts, sazinieties ar repozitorija atbalsta dienestu, lai pievienotu un apstiprinātu adresi.",
-  "login.auth.attributes.message": "Iestādei jāsniedz nepārprotams federācijas identifikators vai e-pasta adrese. Saņemtie dati trūka, bija nederīgi vai pretrunīgi. Sazinieties ar savu iestādi vai repozitorija atbalsta dienestu. Konts netika izveidots vai sasaistīts.",
-  "login.auth.attributes.title": "Neizdevās pārbaudīt iestādes sniegtos datus",
   "login.institution.unavailable": "Pieslēgšanās ar iestādes kontu nav pieejama. Izmantojiet lokālo kontu vai sazinieties ar atbalsta dienestu.",
   "login.institution.help": "Izvēlieties savu iestādi CLARIN iestāžu izvēles lapā (angļu valodā). Pirmajā veiksmīgajā pieslēgšanās reizē tiks izveidots repozitorija konts, ja nebūs konflikta ar esošu kontu. Varat arī izmantot lokālo repozitorija kontu.",
   // "401.help": "You're not authorized to access this page. You can use the button below to get back to the home page.",
@@ -9636,8 +9633,6 @@
   "login.form.or-divider": "vai",
 
   // "login.auth.failed.shibboleth.title": "Shibboleth authentication failed",
-  "login.auth.review.title": "Nepieciešama palīdzība konta sasaistīšanai",
-  "login.auth.review.message": "Pieslēgšanos ar iestādes kontu neizdevās automātiski sasaistīt ar repozitorija kontu. Pieslēdzieties ar savu esošo kontu vai sazinieties ar repozitorija atbalsta dienestu, lai pārbaudītu konta piederību un sasaistītu pieslēgšanos ar iestādes kontu. Konti netika sasaistīti vai izveidoti. Pieslēgšanās ar lokālo kontu pati par sevi kontus nesasaista.",
 
   "login.auth.failed.shibboleth.title": "Shibboleth autentifikācija neizdevās",
 

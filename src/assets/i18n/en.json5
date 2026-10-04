@@ -1,7 +1,4 @@
 {
-  "profile.email.missing": "You can sign in with your institutional account without an email address. Before using features that require email, contact repository support to add and verify an address.",
-  "login.auth.attributes.message": "Your institution must provide an unambiguous federated identifier or email address. The received details were missing, invalid or conflicting. Contact your institution or repository support. No account was created or linked.",
-  "login.auth.attributes.title": "Institutional details could not be verified",
   "login.institution.unavailable": "Institutional login is unavailable. Please use your local account or contact support.",
   "login.institution.help": "Choose your institution on the CLARIN discovery page (in English). Your first successful sign-in creates a repository account if there is no existing account conflict. You can also use your local repository account.",
   "401.help": "You're not authorized to access this page. You can use the button below to get back to the home page.",
@@ -6151,8 +6148,6 @@
   "item.tombstone.replaced.help-desk.message": ["The author(s) asked us to hide this submission.", "We still keep all the data and metadata of the original submission but the submission", "is now located at the above url(s). If you need the contents of the original submission, contact us at our", "Help Desk."],
 
   "login.form.or-divider": "or",
-  "login.auth.review.title": "Help is needed to connect your account",
-  "login.auth.review.message": "Your institutional sign-in could not be connected to a repository account automatically. Sign in using your existing account, or contact repository support for help verifying ownership and connecting your institutional login. No accounts were linked or created. Signing in locally does not link accounts automatically.",
 
   "login.auth.failed.shibboleth.title": "Shibboleth authentication failed",
 
