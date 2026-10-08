@@ -44,7 +44,7 @@ operational. The retired ops publisher must not be used for new releases. The
 existing Latvian publication remains preserved and its target rollout paused.
 
 If publication fails, use **Re-run failed jobs**, retaining the successful build's
-`frontend-candidate-RUN_ID` artifact (30 days). The publisher rechecks its digest,
+`frontend-candidate-RUN_ID` artifact (3 days). The publisher rechecks its digest,
 source, reports and runtime identity. Do not rerun all jobs merely to retry a push:
 that recompiles and may produce a different digest. An existing image tag cannot
 be moved by this publisher. A full rebuild of the same source needs a deliberate
@@ -104,3 +104,20 @@ This also removes obsolete CodeQL actions, an empty workflow and a missing local
 reusable deployment workflow from active Actions configuration without upgrading
 upstream tooling. CLARIN's focused release workflow is the fork's PR/mainline entry
 point; it does not claim to run the upstream full Cypress/backend test matrix.
+
+## CI artifact retention
+
+Candidate archives, uploaded test reports and Docker build records expire after
+three days from upload. Approve or retry publication within that window. Existing
+artifacts keep their original expiry and require separate cleanup if no longer needed.
+
+After image publication and durable release-report verification succeed, a separate
+cleanup job deletes only that build's candidate artifact, using its upload ID.
+Failed, cancelled, skipped or approval-pending publication keeps the candidate
+until expiry. Diagnostic artifacts retain their three-day window; published GHCR
+images, GitHub release assets and workflow logs are not deleted by this job.
+
+If cleanup fails, use **Re-run failed jobs** to retry only cleanup, without
+rebuilding or republishing. An already absent candidate is a successful no-op.
+After successful cleanup, publication cannot be rerun from that CI archive;
+use the verified published image and release reports for selection and rollback.
