@@ -1,4 +1,34 @@
 {
+  "clarin-lv.navigation": "Galvenā navigācija",
+  "clarin-lv.menu": "Izvēlne",
+  "clarin-lv.home": "Repozitorija sākumlapa",
+  "clarin-lv.browse": "Pārlūkot",
+  "clarin-lv.corpus-search": "Meklēt korpusos",
+  "clarin-lv.new-tab": "atveras jaunā cilnē",
+  "clarin-lv.help": "Palīdzība",
+  "clarin-lv.deposit": "Deponēšana",
+  "clarin-lv.cite": "Citēšana",
+  "clarin-lv.lifecycle": "Iesniegumu dzīvescikls",
+  "clarin-lv.faq": "BUJ",
+  "clarin-lv.metadata": "Metadatu vadlīnijas",
+  "clarin-lv.contact": "Kontakti",
+  "clarin-lv.about-policies": "Par vietni un politikas",
+  "clarin-lv.website": "CLARIN-LV vietne",
+  "clarin-lv.partners": "Partneri, koordinācija un finansējums",
+  "clarin-lv.repository-links": "Repozitorijs",
+  "clarin-lv.helpdesk": "Palīdzības dienests",
+  "clarin-lv.b-centre": "CLARIN-LV B-centra sertifikāts",
+  "clarin-lv.coretrustseal": "CLARIN-LV CoreTrustSeal sertifikāts",
+  "clarin-lv.cookie-settings": "Sīkdatņu iestatījumi",
+  "clarin-lv.software-credit": "Repozitorija programmatūra:",
+  "clarin-lv.icon-credit": "Smashicons un Freepik ikonas no flaticon.com, licence:",
+  "clarin-lv.partner.lumii": "Latvijas Universitātes Matemātikas un informātikas institūts",
+  "clarin-lv.partner.lulfmi": "Latvijas Universitātes Literatūras, folkloras un mākslas institūts",
+  "clarin-lv.partner.lu": "Latvijas Universitāte",
+  "clarin-lv.partner.rsu": "Rīgas Stradiņa universitāte",
+  "clarin-lv.partner.liepaja": "RTU Liepājas akadēmija",
+  "clarin-lv.partner.rezekne": "RTU Rēzeknes akadēmija",
+  "clarin-lv.partner.lnb": "Latvijas Nacionālā bibliotēka",
   "login.institution.unavailable": "Pieslēgšanās ar iestādes kontu nav pieejama. Izmantojiet lokālo kontu vai sazinieties ar atbalsta dienestu.",
   "login.institution.help": "Izvēlieties savu iestādi CLARIN iestāžu izvēles lapā (angļu valodā). Pirmajā veiksmīgajā pieslēgšanās reizē tiks izveidots repozitorija konts, ja nebūs konflikta ar esošu kontu. Varat arī izmantot lokālo repozitorija kontu.",
   // "401.help": "You're not authorized to access this page. You can use the button below to get back to the home page.",
@@ -3265,7 +3295,7 @@
 
   // "home.title": "Home",
   // TODO Source message changed - Revise the translation
-  "home.title": "DSpace Angular :: Sākums",
+  "home.title": "Sākums",
 
   // "home.top-level-communities.head": "Communities in DSpace",
   "home.top-level-communities.head": "DSpace Kategorijas",
@@ -6217,11 +6247,11 @@
   "repository.image.logo": "Repozitorija logotips",
 
   // "repository.title": "DSpace Repository",
-  "repository.title": "DSpace repozitorijs",
+  "repository.title": "CLARIN-LV repozitorijs",
 
   // "repository.title.prefix": "DSpace Repository :: ",
   // TODO New key - Add a translation
-  "repository.title.prefix": "DSpace Repository :: ",
+  "repository.title.prefix": "CLARIN-LV repozitorijs —",
 
   // "resource-policies.add.button": "Add",
   // TODO New key - Add a translation

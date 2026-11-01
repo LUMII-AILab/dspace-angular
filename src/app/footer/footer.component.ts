@@ -1,4 +1,6 @@
 import { Component, OnInit, Optional } from '@angular/core';
+import { TranslateService } from '@ngx-translate/core';
+import { CLARIN_LV_PARTNERS, CLARIN_LV_PORTAL, clarinLocalizedUrl, LocalizedClarinLink } from '../shared/clarin-lv-links';
 import { hasValue } from '../shared/empty.util';
 import { KlaroService } from '../shared/cookies/klaro.service';
 import { environment } from '../../environments/environment';
@@ -16,6 +18,10 @@ import { ConfigurationDataService } from '../core/data/configuration-data.servic
 })
 export class FooterComponent implements OnInit {
   dateObj: number = Date.now();
+  readonly partners = CLARIN_LV_PARTNERS;
+
+  readonly portal = CLARIN_LV_PORTAL;
+
 
   /**
    * A boolean representing if to show or not the top footer container
@@ -38,9 +44,14 @@ export class FooterComponent implements OnInit {
   constructor(
     @Optional() private cookies: KlaroService,
     private authorizationService: AuthorizationDataService,
-    protected configurationDataService: ConfigurationDataService
+    protected configurationDataService: ConfigurationDataService,
+    private translate: TranslateService
   ) {
     this.showSendFeedback$ = this.authorizationService.isAuthorized(FeatureID.CanSendFeedback);
+  }
+
+  localizedUrl(link: LocalizedClarinLink): string {
+    return clarinLocalizedUrl(link, this.translate.currentLang);
   }
 
   ngOnInit(): void {
