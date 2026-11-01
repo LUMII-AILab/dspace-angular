@@ -1,0 +1,153 @@
+<div id="faq-like">
+  <h2 id="ufal-point-faq">Par metadatiem</h2>
+  <p>Šajā lapā ir informācija par to, kādus metadatus mēs pieprasām un kā tos izplatām. Metadati ir brīvi pieejami un tiek izplatīti kā sabiedrības īpašums (saskaņā ar <a href="http://creativecommons.org/about/cc0">CC0</a>). Tomēr mēs paturam tiesības tikt informētiem par CLARIN-LV repozitorija metadatu komerciālu izmantošanu, tostarp saņemt jūsu izmantošanas gadījuma aprakstu <a class="helpdesk-tolink" href="mailto:info@clarin.lv">palīdzības dienestā</a>.</p>
+
+  <hr />
+  <ul id="faqs-list">
+    <li><a href="static/metadata#formats">Metadatu formāti</a></li>
+    <li><a href="static/metadata#metadata">Iesniegtie metadati</a></li>
+    <li><a href="static/metadata#mapping">Metadatu atbilstības</a></li>
+  </ul>
+  <hr />
+
+  <div>
+    <h3 id="formats">Metadatu formāti</h3>
+    <p>Iesniegšanas laikā lietotāji aizpilda metadatu laukus, kas tiek glabāti kā daļa no ieraksta. Mēs varam izplatīt iesniegumu metadatus dažādos formātos, tostarp <a href="http://clarin.eu/cmdi">CMDI</a> un <a href="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">oai_dc</a>, bet ne tikai tajos. Skatiet <a href="/server/oai/request?verb=ListMetadataFormats">pilnu atbalstīto formātu sarakstu</a>, taču ņemiet vērā, ka daži formāti var nebūt piemērojami visiem vienumiem. Dažādie formāti palīdz padarīt iesniegto saturu atrodamu vairākos apkopotājos un/vai meklētājprogrammās.</p>
+    <h4>CMDI</h4>
+    <p>Lai uzzinātu vairāk par šo tēmu, skatiet CLARIN ievadu <a href="http://clarin.eu/cmdi">komponentu metadatos</a>.</p>
+    <p>Mūsu pašreizējie iesniegumi atbilst profilam/shēmai <a href="https://catalog.clarin.eu/ds/ComponentRegistry?registrySpace=published&amp;itemId=clarin.eu:cr1:p_1403526079380">clarin.eu:cr1:p_1403526079380</a>. Daļa vecāko iesniegumu (galvenokārt tie, kas iesniegti pirms 2014. gada septembra/oktobra) izmanto citu profilu — <a href="https://catalog.clarin.eu/ds/ComponentRegistry?registrySpace=published&amp;itemId=clarin.eu:cr1:p_1349361150622">clarin.eu:cr1:p_1349361150622</a>. Mēs nolēmām izveidot jaunu profilu, lai labāk atspoguļotu iesniegšanas procesu, kuru veic lietotājs. Iepriekšējais profils bija OLAC un MetaShare komponentu kombinācija, kas mums lika dažādās vietās apstrādāt dublējošu informāciju. Tas arī piesaistīja mūs kāda cita metadatu shēmai un tās semantikai, ko mēs nevarējām ne ietekmēt, ne mainīt.</p>
+    <p>Abos profilos ir samērā plaši izmantotas saites uz jēdzienu reģistru. Saites uz nu jau slēgto <a href="http://www.isocat.org">ISOcat DCR</a> tika novirzītas uz <a href="https://www.clarin.eu/conceptregistry/">CCR</a>, un OLAC komponenta jēdzienu saites norāda uz <a href="http://purl.org/dc/terms">DCMI terms</a> jēdzieniem (piemēram, kopsavilkuma jēdziena saite ir <a href="http://purl.org/dc/terms/abstract">http://purl.org/dc/terms/abstract</a>). <a href="https://vlo.clarin.eu/">VLO</a> lauku vērtību atrašanai izmanto jēdzienu saites, galvenokārt un vēlams no CCR, un dažos gadījumos — tieši norādītus XPath ceļus. Mūsu vecākais profils bija šāds tieši norādīts gadījums. XPath ceļi <a href="https://vlo.clarin.eu/mapping">VLO atbilstību noteikumos</a> atbilda tikai vienam konkrētam <a href="https://catalog.clarin.eu/ds/ComponentRegistry?registrySpace=published&amp;itemId=clarin.eu:cr1:p_1288172614026">profilam</a>. Vēlāk atbilstību noteikumi tika paplašināti (dažām fasetēm), lai XPath ceļi darbotos arī ar <a href="https://catalog.clarin.eu/ds/ComponentRegistry?registrySpace=published&amp;itemId=clarin.eu:cr1:c_1349361150621">komponentu</a>, kas atvasināts no šī konkrētā profila. Šī īpašā apstrāde bija viens no iemesliem cita profila izveidei. Vēl viens iemesls sava profila izveidei bija tas, ka DC jēdzieni joprojām bija pārāk plaši.</p>
+    <p>Tomēr mēs atbalstām iesniegumus ar patvaļīgiem CMDI metadatu failiem, kas tiek izmantoti OAI-PMH, kad tiek pieprasīts CMDI metadatu profils.</p>
+    <p>Vairākiem iepriekš minētajiem apsvērumiem vajadzētu atturēt jūs no <a href="https://catalog.clarin.eu/ds/ComponentRegistry?registrySpace=published&amp;itemId=clarin.eu:cr1:p_1349361150622">clarin.eu:cr1:p_1349361150622</a> atkārtotas izmantošanas. Atkārtoti izmantojot tā atsevišķos komponentus, ņemiet vērā iepriekš teikto par VLO atbilstību noteikumiem. <a href="https://catalog.clarin.eu/ds/ComponentRegistry?registrySpace=published&amp;itemId=clarin.eu:cr1:p_1403526079380">clarin.eu:cr1:p_1403526079380</a> tika izveidots, ņemot vērā VLO atbilstību noteikumus (lai gan tie var mainīties), taču tas joprojām atspoguļo mūsu skatījumu un izmantošanas gadījumus. Ja neapkopojat daudz vairāk informācijas, nekā aprakstīts tālāk, šis profils var būt piemērots jūsu vajadzībām vai kā pamats jūsu pašu profilam.</p>
+    <h4>oai_dc</h4>
+    <p>oai_dc ir <a href="http://www.openarchives.org/OAI/2.0/oai_dc.xsd">OAI-PMH</a> pieprasītais formāts. Skatiet <a href="static/metadata#mapping">atbilstību sadaļu</a>, lai saprastu, kā mūsu iesniegumu lauki tiek pārveidoti šajā formātā.</p>
+  </div>
+  <br />
+  <div>
+    <h3 id="metadata">Iesniegtie metadati</h3>
+    <p>Tālāk ir uzskaitīti lauki, kurus lūdzam aizpildīt iesniegšanas darbplūsmā (saraksts laiku pa laikam var mainīties). Metadati tiek iesniegti angļu valodā. Atkarībā no iesniedzamā resursa veida pastāv nelielas atšķirības. Ne visi lauki ir iekļauti visos formātos. Daži lauki tiek ģenerēti automātiski (piemēram, cilvēkam lasāmi valodu nosaukumi līdzās ISO kodiem, identifikatori, citi datumi).</p>
+    <table class="table-bordered">
+      <thead>
+        <tr><th>Lauka nosaukums</th><th>Apraksts</th><th>Statuss</th></tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Tips</strong></td>
+          <td>Resursa tips: “Corpus” attiecas uz teksta, runas un multimodāliem korpusiem. “Lexical Conceptual Resource” ietver leksikonus, ontoloģijas, vārdnīcas, vārdu sarakstus u. c. “language Description” aptver valodas modeļus un gramatikas. “Technology / Tool / Service” izmanto rīkiem, sistēmām, sistēmu komponentiem u. c.</td>
+          <td><span class="label label-info">obligāts</span></td>
+        </tr>
+        <tr>
+          <td><strong>Nosaukums</strong></td>
+          <td>Vienuma galvenais nosaukums.</td>
+          <td><span class="label label-info">obligāts</span></td>
+        </tr>
+        <tr>
+          <td><strong>Projekta URL</strong></td>
+          <td>Ar iesniegto vienumu saistītā resursa/projekta URL (piemēram, projekta tīmekļlapa). Pārbauda ar regulāro izteiksmi (sākas ar http/https).</td>
+          <td><span class="label label-info">pārbaude ar regulāro izteiksmi</span></td>
+        </tr>
+        <tr>
+          <td><strong>Demonstrācijas URL</strong></td>
+          <td>Demonstrācijas, paraugu vai rīku gadījumā izvades parauga URL. Pārbauda ar regulāro izteiksmi (sākas ar http/https).</td>
+          <td><span class="label label-info">pārbaude ar regulāro izteiksmi</span></td>
+        </tr>
+        <tr>
+          <td><strong>Izdošanas datums</strong></td>
+          <td>Iesnieguma datu izdošanas datums, ja tāds ir, piemēram, 2014-01-21, vai vismaz gads.</td>
+          <td><span class="label label-info">obligāts</span></td>
+        </tr>
+        <tr>
+          <td><strong>Autors</strong></td>
+          <td>Vienuma autoru vārdi. Kolekcijām (piemēram, korpusiem vai citām lielām teksta datubāzēm) parasti jānorāda kolekcijas veidošanā iesaistīto cilvēku vārdi, nevis atsevišķo daļu autori. Personas vārdu glabā šādā formā: uzvārds, komats, pārējās vārda daļas (piemēram, “Smith, John Jr.”).</td>
+          <td><span class="label label-info">obligāts</span> <span class="label label-info">atkārtojams</span></td>
+        </tr>
+        <tr>
+          <td><strong>Izdevējs</strong></td>
+          <td>Tās organizācijas/vienības nosaukums, kas publicējusi kādu iepriekšēju vienuma versiju, vai jūsu iestādes nosaukums.</td>
+          <td><span class="label label-info">obligāts</span> <span class="label label-info">atkārtojams</span></td>
+        </tr>
+        <tr>
+          <td><strong>Kontaktpersona</strong></td>
+          <td>Persona, ar kuru sazināties, ja rodas problēmas ar iesniegumu. Persona, kas spēj sniegt informāciju par resursu, piemēram, kāds no autoriem vai iesniedzējs. Glabā kā strukturētu virkni, kas satur vārdu, uzvārdu, e-pastu un iestādi.</td>
+          <td><span class="label label-info">obligāts</span> <span class="label label-info">atkārtojams</span></td>
+        </tr>
+        <tr>
+          <td><strong>Finansējums</strong></td>
+          <td>Sponsori un finansējums, kas atbalstījis iesniegumā aprakstīto darbu. Glabā kā strukturētu virkni, kas satur projekta nosaukumu, projekta kodu, finansētāja organizāciju, līdzekļu veidu (own/national/eu) un OpenAIRE identifikatoru (kas tiek glabāts arī dc.relation).</td>
+          <td><span class="label label-info">atkārtojams</span></td>
+        </tr>
+        <tr>
+          <td><strong>Apraksts</strong></td>
+          <td>Iesnieguma tekstuāls apraksts.</td>
+          <td><span class="label label-info">obligāts</span></td>
+        </tr>
+        <tr>
+          <td><strong>Valoda</strong></td>
+          <td>Vienuma pamatsatura valoda(-s). Glabā kā ISO 639-3 kodu. Obligāts korpusiem, leksiski konceptuāliem resursiem un valodas aprakstiem.</td>
+          <td><span class="label label-info">atkārtojams</span> <span class="label label-info">obligāts atkarībā no tipa</span></td>
+        </tr>
+        <tr>
+          <td><strong>Tēmas atslēgvārdi</strong></td>
+          <td>Atslēgvārdi vai frāzes, kas saistītas ar vienuma tēmu.</td>
+          <td><span class="label label-info">atkārtojams</span> <span class="label label-info">obligāts</span></td>
+        </tr>
+        <tr>
+          <td><strong>Apjoms</strong></td>
+          <td>Iesniegto datu apjoms, piemēram, vārdlietojumu skaits vai failu skaits.</td>
+          <td><span class="label label-info">atkārtojams</span></td>
+        </tr>
+        <tr>
+          <td><strong>Satura veids</strong></td>
+          <td>Vienuma pamatsatura veids, piemēram, teksts vai audio. Izvēle nolaižamajā sarakstā; obligāts korpusiem, valodas aprakstiem un leksiski konceptuāliem resursiem.</td>
+          <td><span class="label label-info">izvēle nolaižamajā sarakstā</span> <span class="label label-info">obligāts atkarībā no tipa</span></td>
+        </tr>
+        <tr>
+          <td><strong>Detalizēts tips</strong></td>
+          <td>Resursa tipa sīkāka klasifikācija. Izvēle nolaižamajā sarakstā; obligāts rīkiem, valodas aprakstiem un leksiski konceptuāliem resursiem.</td>
+          <td><span class="label label-info">izvēle nolaižamajā sarakstā</span> <span class="label label-info">obligāts atkarībā no tipa</span></td>
+        </tr>
+        <tr>
+          <td><strong>Atkarība no valodas</strong></td>
+          <td>Loģiska vērtība, kas norāda, vai aprakstītais rīks/pakalpojums ir atkarīgs no valodas. Obligāts rīkiem.</td>
+          <td><span class="label label-info">obligāts atkarībā no tipa</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+  <br />
+  <div>
+    <h3 id="mapping">Metadatu atbilstības</h3>
+    <p>Tālāk tabulās ir norādītas iesnieguma lauku atbilstības oai_dc laukiem, kā arī daži svarīgi automātiski ģenerēti lauki.</p>
+    <table class="table-bordered">
+      <thead>
+        <tr><th>Iesnieguma lauks</th><th>Atbilstošais lauks</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Tips</td><td>dc.type</td></tr>
+        <tr><td>Nosaukums</td><td>dc.title</td></tr>
+        <tr><td>Projekta URL</td><td>dc.source</td></tr>
+        <tr><td>Demonstrācijas URL</td><td>nav atbilstības</td></tr>
+        <tr><td>Izdošanas datums</td><td>dc.date</td></tr>
+        <tr><td>Autors</td><td>dc.creator</td></tr>
+        <tr><td>Izdevējs</td><td>dc.publisher</td></tr>
+        <tr><td>Kontaktpersona</td><td>nav atbilstības</td></tr>
+        <tr><td>Finansējums</td><td>nav atbilstības</td></tr>
+        <tr><td>Apraksts</td><td>dc.description</td></tr>
+        <tr><td>Valoda</td><td>dc.language</td></tr>
+        <tr><td>Tēmas atslēgvārdi</td><td>dc.subject</td></tr>
+        <tr><td>Apjoms</td><td>nav atbilstības</td></tr>
+        <tr><td>Satura veids</td><td>nav atbilstības</td></tr>
+        <tr><td>Detalizēts tips</td><td>nav atbilstības</td></tr>
+      </tbody>
+    </table>
+    <table class="table-bordered">
+      <thead>
+        <tr><th>Ģenerētais lauks</th><th>Apraksts</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>dc.identifier</td><td>Resursa PID (pašlaik Handle).</td></tr>
+        <tr><td>dc.rights</td><td>Atkārtojams lauks var saturēt tās licences nosaukumu, ar kuru resurss tiek izplatīts, licences pilnā teksta URL un tā saukto etiķeti (PUB, ACA, RES).</td></tr>
+      </tbody>
+    </table>
+  </div>
+</div>
