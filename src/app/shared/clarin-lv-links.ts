@@ -21,12 +21,12 @@ export const CLARIN_LV_PARTNERS: ReadonlyArray<LocalizedClarinLink & { key: stri
 ];
 
 export const CLARIN_LV_HELP_LINKS = [
-  { key: 'deposit', path: '/static/deposit' },
-  { key: 'cite', path: '/static/cite' },
-  { key: 'lifecycle', path: '/static/item-lifecycle' },
-  { key: 'faq', path: '/static/faq' },
-  { key: 'metadata', path: '/static/metadata' },
-  { key: 'contact', path: '/contact' },
+  { key: 'deposit', path: 'static/deposit' },
+  { key: 'cite', path: 'static/cite' },
+  { key: 'lifecycle', path: 'static/item-lifecycle' },
+  { key: 'faq', path: 'static/faq' },
+  { key: 'metadata', path: 'static/metadata' },
+  { key: 'contact', path: 'contact' },
 ];
 
 export function clarinLocalizedUrl(link: LocalizedClarinLink, language: string): string {

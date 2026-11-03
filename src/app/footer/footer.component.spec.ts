@@ -2,10 +2,7 @@ import { CommonModule } from '@angular/common';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { RouterTestingModule } from '@angular/router/testing';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { of } from 'rxjs';
 import { FooterComponent } from './footer.component';
-import { AuthorizationDataService } from '../core/data/feature-authorization/authorization-data.service';
-import { ConfigurationDataService } from '../core/data/configuration-data.service';
 import { KlaroService } from '../shared/cookies/klaro.service';
 import { CLARIN_LV_HELP_LINKS, CLARIN_LV_PARTNERS } from '../shared/clarin-lv-links';
 
@@ -22,8 +19,6 @@ describe('CLARIN-LV footer', () => {
       declarations: [FooterComponent],
       providers: [
         { provide: KlaroService, useValue: cookies },
-        { provide: AuthorizationDataService, useValue: { isAuthorized: () => of(false) } },
-        { provide: ConfigurationDataService, useValue: { findByPropertyName: () => of(undefined) } },
       ],
     }).compileComponents();
   }));
@@ -66,7 +61,7 @@ describe('CLARIN-LV footer', () => {
 
   it('keeps policies, support and attribution without duplicating the Help menu', () => {
     for (const link of CLARIN_LV_HELP_LINKS) {
-      expect(element.querySelector(`a[href="${link.path}"], a[href="${link.path.substring(1)}"]`)).toBeNull();
+      expect(element.querySelector(`a[href="${link.path}"], a[href="/${link.path}"]`)).toBeNull();
     }
     expect(element.querySelector('a[href="static/about"]')).not.toBeNull();
     expect(element.querySelector('a[href="mailto:info@clarin.lv"]')).not.toBeNull();

@@ -158,6 +158,10 @@ Do not restore these by replacing institutional names. The policy/help evidence 
 - `git diff --check` passed. Shared static loader, Contact and cookie-service files have no diff against HEAD. No global routing/history/cache/rate-limit or locale-service change is part of this branch.
 - `task start-dev` succeeded; local stack is back in live-preview mode, preserving data. No commits, pushes or deployments.
 
-Earlier broad SSR probes observed English initial HTML for LV cookies and HTTP 429 during repeated browser loads. Those failed runs remain documented in the [historical checkpoint](clarin-lv-ui-plan.md), not presented as passes. Per the owner's narrowed scope, their suspected upstream cache/rate-limit causes are **not being investigated or fixed in this branch**; no additional broad SSR suite is required here. Earlier production compilation passed before the final scope reduction; the final reduced patch was validated by the focused tests and live preview, not a fresh production rebuild.
+Earlier broad SSR probes observed English initial HTML for LV cookies and HTTP 429 during repeated browser loads. Those failed runs remain documented in the [historical checkpoint](https://github.com/LUMII-AILab/dspace-angular/blob/30474d509566ef816a90a98844fbc472501f8128/docs/clarin-lv-ui-plan.md#previous-checkpoint--2026-10-30-paused-at-owner-token-limit-request-historical), not presented as passes. Per the owner's narrowed scope, their suspected upstream cache/rate-limit causes are **not being investigated or fixed in this branch**; no additional broad SSR suite is required here. Earlier production compilation passed before the final scope reduction; the final reduced patch was validated by the focused tests and live preview, not a fresh production rebuild.
 
 Authenticated workflows, dynamic agreement/licence data, upstream history/scrolling, external destinations and operational/legal/translation approval are outside this customization regression check. AI Lab's content review remains explicitly assigned after the PR.
+
+The November 3 review and subsequent local simplification checks are tracked in the
+[current handoff](clarin-lv-ui-plan.md#validation-and-remaining-limits); they supersede
+the older production-compilation status above without resolving SSR runtime acceptance.

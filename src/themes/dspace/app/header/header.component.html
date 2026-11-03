@@ -17,7 +17,7 @@
       <li ngbDropdown>
         <button type="button" id="clarin-help-menu" ngbDropdownToggle>{{ 'clarin-lv.help' | translate }}</button>
         <div ngbDropdownMenu aria-labelledby="clarin-help-menu">
-          <a *ngFor="let link of helpLinks" ngbDropdownItem [href]="link.path.substring(1)">{{ 'clarin-lv.' + link.key | translate }}</a>
+          <a *ngFor="let link of helpLinks" ngbDropdownItem [href]="link.path">{{ 'clarin-lv.' + link.key | translate }}</a>
         </div>
       </li>
       <li ngbDropdown>
