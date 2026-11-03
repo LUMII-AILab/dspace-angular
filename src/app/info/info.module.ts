@@ -4,8 +4,12 @@ import { SharedModule } from '../shared/shared.module';
 import { EndUserAgreementComponent } from './end-user-agreement/end-user-agreement.component';
 import { InfoRoutingModule } from './info-routing.module';
 import { EndUserAgreementContentComponent } from './end-user-agreement/end-user-agreement-content/end-user-agreement-content.component';
+import { EndUserAgreementContentEnComponent } from './end-user-agreement/end-user-agreement-content/end-user-agreement-content-en.component';
+import { EndUserAgreementContentLvComponent } from './end-user-agreement/end-user-agreement-content/end-user-agreement-content-lv.component';
 import { PrivacyComponent } from './privacy/privacy.component';
 import { PrivacyContentComponent } from './privacy/privacy-content/privacy-content.component';
+import { PrivacyContentEnComponent } from './privacy/privacy-content/privacy-content-en.component';
+import { PrivacyContentLvComponent } from './privacy/privacy-content/privacy-content-lv.component';
 import { ThemedEndUserAgreementComponent } from './end-user-agreement/themed-end-user-agreement.component';
 import { ThemedPrivacyComponent } from './privacy/themed-privacy.component';
 import { FeedbackComponent } from './feedback/feedback.component';
@@ -21,8 +25,12 @@ const DECLARATIONS = [
   EndUserAgreementComponent,
   ThemedEndUserAgreementComponent,
   EndUserAgreementContentComponent,
+  EndUserAgreementContentEnComponent,
+  EndUserAgreementContentLvComponent,
   PrivacyComponent,
   PrivacyContentComponent,
+  PrivacyContentEnComponent,
+  PrivacyContentLvComponent,
   ThemedPrivacyComponent,
   FeedbackComponent,
   FeedbackFormComponent,
