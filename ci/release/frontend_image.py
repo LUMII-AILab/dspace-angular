@@ -71,9 +71,7 @@ def check_manifest(data):
                         r"trivy_[0-9.]+_Linux-64bit.tar.gz", data["trivy_url"]),
             "Unexpected scanner download")
     packages = data["apk_packages"].split()
-    require(len(packages) == 3 and all(re.fullmatch(r"[a-z0-9+]+=[0-9.]+-r\d+", p)
-                                     for p in packages), "Unpinned APK tools")
-    require({p.split("=")[0] for p in packages} == {"python3", "make", "g++"},
+    require(len(packages) == 3 and set(packages) == {"python3", "make", "g++"},
             "Unexpected APK tools")
     require(all(isinstance(v, str) and "\n" not in v and "\r" not in v for v in data.values()),
             "Inputs must be single-line strings")

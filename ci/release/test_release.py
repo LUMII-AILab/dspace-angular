@@ -49,6 +49,14 @@ class ReleaseTests(unittest.TestCase):
         self.assertNotIn('source_revision',json.loads((m.RECIPE/'toolchain.json').read_text()))
         self.assertEqual(m.inputs()['source_lock_sha256'],hashlib.sha256((ROOT/'yarn.lock').read_bytes()).hexdigest())
 
+    def test_build_tools_reject_pins_extra_packages_and_options(self):
+        for packages in ('python3=3.12.14-r0 make g++', 'python3 make curl',
+                         'python3 make g++ --allow-untrusted', 'python3 make make'):
+            with self.subTest(packages=packages):
+                data = m.inputs() | {'apk_packages': packages}
+                with self.assertRaisesRegex(ValueError, 'Unexpected APK tools'):
+                    m.check_manifest(data)
+
     def test_exact_archive_and_source_tampering(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d);candidate=p/'image.tar'

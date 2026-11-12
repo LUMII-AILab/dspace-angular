@@ -8,8 +8,11 @@ approval in `frontend-release` and copies that artifact
 without rebuilding, verifies the registry digest, then creates a GitHub release
 `sha-FULL_COMMIT` with small JSON reports. No server deployment runs in CI.
 
-`image/toolchain.json` owns pinned Node/Yarn/PM2, APK, Buildx/BuildKit, scanner and
-publisher versions. Source revision and package/lock hashes are derived from the
+`image/toolchain.json` owns pinned Node/Yarn/PM2, Buildx/BuildKit, scanner and
+publisher versions, and the allowed APK build tools. Python, make and g++ resolve
+from the pinned base image's Alpine release repositories; exact package revisions
+may be replaced there. The image retains their resolved inventory in
+`/usr/share/clarin-build/apk-packages.txt`. Source revision and package/lock hashes are derived from the
 checked-out commit; `image/inputs.json` is generated. The source context is a Git
 archive without submodule contents. Frozen dependency installation and persistent
 BuildKit `gha` cache retain dependency layers; PRs only read the trusted cache.

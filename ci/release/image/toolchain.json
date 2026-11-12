@@ -8,7 +8,7 @@
   "node_version": "18.20.8",
   "yarn_version": "1.22.22",
   "pm2_version": "7.0.3",
-  "apk_packages": "python3=3.12.14-r0 make=4.4.1-r2 g++=14.2.0-r4",
+  "apk_packages": "python3 make g++",
   "buildx_version": "v0.37.0",
   "buildkit_image": "moby/buildkit@sha256:ddd1ca44b21eda906e81ab14a3d467fa6c39cd73b9a39df1196210edcb8db59e",
   "sbom_generator": "docker/buildkit-syft-scanner@sha256:ae4f3b554449e7e25548e7d8ccc029d17357348e30c6e3df01b92bc93654d6a9",
