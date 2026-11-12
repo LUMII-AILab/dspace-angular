@@ -78,7 +78,32 @@ try {
       assert.equal(ui.host, 'public.example');
     }
   }
-  console.log('Config file/environment precedence, public JSON and HTTP/HTTPS listener wiring passed.');
+  const contentSource = fs.readFileSync(path.join(root, 'src/app/shared/html-content.service.ts'), 'utf8');
+  const contentTree = ts.createSourceFile('html-content.service.ts', contentSource, ts.ScriptTarget.Latest, true);
+  const contentClass = contentTree.statements.find(statement =>
+    ts.isClassDeclaration(statement) && statement.name.text === 'HtmlContentService');
+  const urlMethod = contentClass.members.find(member => member.name?.getText(contentTree) === 'buildRuntimeUrl');
+  assert(urlMethod, 'SSR content URL method must be tested');
+  const urlCode = ts.transpileModule(`class ContentUrl { ${urlMethod.getText(contentTree)} }`, {
+    compilerOptions: { target: ts.ScriptTarget.ES2020, module: ts.ModuleKind.CommonJS },
+  }).outputText;
+  const contentPath = '/repository/static-files/lv/deposit.html';
+  for (const [platform, socket, expected] of [
+    ['server', { localAddress: '127.0.0.1', localPort: 4000 }, 'http://127.0.0.1:4000'],
+    ['server', { localAddress: '::1', localPort: 4000 }, 'http://[::1]:4000'],
+    ['server', { localAddress: '127.0.0.1', localPort: 443, encrypted: true }, 'https://public.example'],
+    ['server', undefined, 'https://public.example'],
+    ['browser', { localAddress: '127.0.0.1', localPort: 4000 }, ''],
+  ]) {
+    const context = {
+      isPlatformServer: value => value === 'server',
+      state: { platformId: platform, request: { protocol: 'https', get: () => 'public.example', socket } },
+      contentPath,
+    };
+    const actual = vm.runInNewContext(urlCode + '\nContentUrl.prototype.buildRuntimeUrl.call(state, contentPath)', context);
+    assert.equal(actual, expected + contentPath);
+  }
+  console.log('Config precedence, public JSON, listener wiring and SSR content routing passed.');
 } finally {
   process.chdir(originalDirectory);
   for (const key of Object.keys(process.env)) {

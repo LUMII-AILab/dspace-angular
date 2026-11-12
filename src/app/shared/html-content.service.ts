@@ -49,6 +49,13 @@ export class HtmlContentService {
       return path;
     }
 
+    // Read bundled HTML from the HTTP listener, not the bot-protected public ingress.
+    const socket = this.request.socket;
+    if (!socket?.encrypted && socket?.localAddress && Number.isInteger(socket?.localPort)) {
+      const address = socket.localAddress.includes(':') ? `[${socket.localAddress}]` : socket.localAddress;
+      return `http://${address}:${socket.localPort}${path}`;
+    }
+
     const protocol = this.request.protocol;
     const host = this.request.get?.('host');
     if (!protocol || !host) {
