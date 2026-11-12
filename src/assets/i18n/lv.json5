@@ -7876,7 +7876,7 @@
   "submission.sections.upload.header.policy.default.withlist": "Lūdzu, ņemiet vērā, ka augšupielādētie faili kolekcijā {{collectionName}} būs pieejami papildus tam, kas ir skaidri noteikts par atsevišķu failu, ar šādām grupām:",
 
   // "submission.sections.upload.info": "Here you will find all the files currently in the item. You can update the file metadata and access conditions or <strong>upload additional files by dragging & dropping them anywhere on the page.</strong>",
-  "submission.sections.upload.info": "Šeit atradīsit visus failus, kas pašlaik atrodas materiālā. Varat atjaunināt failu metadatus un piekļuves nosacījumus vai <strong>augšupielādēt papildu failus, vienkārši ievelkot un atstājot tos visur lapā</strong>",
+  "submission.sections.upload.info": "Šeit atradīsit visus failus, kas pašlaik atrodas materiālā. Varat atjaunināt failu metadatus un piekļuves nosacījumus vai <strong>augšupielādēt papildu failus, vienkārši ievelkot un atstājot tos visur lapā</strong>.<br/>Augšupielādējot valodas resursus, lūdzu, izmantojiet kādu no CLARIN-LV ieteiktajiem formātiem, kas norādīti <a href=\"https://standards.clarin.eu/sis/views/view-centre.xq?id=CLARIN-LV\" target=\"_blank\" rel=\"noopener noreferrer\">CLARIN standartu informācijas sistēmā</a>.",
 
   // "submission.sections.upload.no-entry": "No",
   "submission.sections.upload.no-entry": "Nē",
@@ -10506,6 +10506,8 @@
 
   // "item.file.description.description": "Description",
   "item.file.description.description": "Apraksts",
+
+  "item.file.description.na": "Nav norādīts",
 
   // "item.file.description.download.file": "Download file",
   "item.file.description.download.file": "Lejupielādēt failu",

@@ -1,5 +1,7 @@
 import { fakeAsync, TestBed, tick } from '@angular/core/testing';
+import { PLATFORM_ID, Provider } from '@angular/core';
 import { HttpClientTestingModule, HttpTestingController } from '@angular/common/http/testing';
+import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { firstValueFrom } from 'rxjs';
 
 import { HtmlContentService } from './html-content.service';
@@ -19,7 +21,7 @@ describe('HtmlContentService', () => {
   let httpMock: HttpTestingController;
   let localeService: LocaleServiceStub;
 
-  function setup(nameSpace: string): void {
+  function setup(nameSpace: string, serverProviders: Provider[] = []): void {
     TestBed.configureTestingModule({
       imports: [HttpClientTestingModule],
       providers: [
@@ -28,9 +30,10 @@ describe('HtmlContentService', () => {
         {
           provide: APP_CONFIG,
           useValue: {
-            ui: { nameSpace },
+            ui: { nameSpace, baseUrl: `http://localhost:4000${nameSpace}` },
           },
         },
+        ...serverProviders,
       ],
     });
 
@@ -111,6 +114,57 @@ describe('HtmlContentService', () => {
 
     expect(content).toBe('<div>English Content</div>');
   }));
+
+  it('should fetch static content from the configured UI origin, not the request Host, during SSR', async () => {
+    setup('/repository', [
+      { provide: PLATFORM_ID, useValue: 'server' },
+      { provide: REQUEST, useValue: { protocol: 'https', get: () => 'attacker.example' } },
+    ]);
+
+    const promise = service.getHmtlContentByPathAndLocale('about');
+
+    httpMock.expectOne('http://localhost:4000/repository/static-files/about.html').flush('Trusted content');
+    expect(await promise).toBe('Trusted content');
+  });
+
+  it('should not request a file name that leaves static-files once decoded', async () => {
+    setup('/repository');
+
+    const promise = service.getHmtlContentByPathAndLocale('..%2Findex');
+
+    httpMock.expectNone(() => true);
+    expect(await promise).toBeUndefined();
+  });
+
+  it('should fetch bundled content through the local HTTP listener behind an HTTPS proxy', async () => {
+    setup('/repository', [
+      { provide: PLATFORM_ID, useValue: 'server' },
+      { provide: REQUEST, useValue: {
+        protocol: 'https', get: () => 'attacker.example',
+        socket: { localAddress: '127.0.0.1', localPort: 4100 },
+      } },
+    ]);
+
+    const promise = service.getHmtlContentByPathAndLocale('about');
+
+    httpMock.expectOne('http://127.0.0.1:4100/repository/static-files/about.html').flush('Local content');
+    expect(await promise).toBe('Local content');
+  });
+
+  it('should use the configured origin for a TLS listener instead of the request Host', async () => {
+    setup('/repository', [
+      { provide: PLATFORM_ID, useValue: 'server' },
+      { provide: REQUEST, useValue: {
+        protocol: 'https', get: () => 'attacker.example',
+        socket: { encrypted: true, localAddress: '127.0.0.1', localPort: 443 },
+      } },
+    ]);
+
+    const promise = service.getHmtlContentByPathAndLocale('about');
+
+    httpMock.expectOne('http://localhost:4000/repository/static-files/about.html').flush('Trusted content');
+    expect(await promise).toBe('Trusted content');
+  });
 
   it('should return empty string from getHtmlContent when request fails', async () => {
     setup('/repository');

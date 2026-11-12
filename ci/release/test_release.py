@@ -57,6 +57,12 @@ class ReleaseTests(unittest.TestCase):
                 with self.assertRaisesRegex(ValueError, 'Unexpected APK tools'):
                     m.check_manifest(data)
 
+    def test_runtime_requires_an_exact_node_22_version(self):
+        for version in ('18.20.8', '24.0.0', '22', '22.1', '22.1.0-rc.1'):
+            with self.subTest(version=version):
+                with self.assertRaisesRegex(ValueError, 'Unreviewed runtime/tool version'):
+                    m.check_manifest(m.inputs() | {'node_version': version})
+
     def test_exact_archive_and_source_tampering(self):
         with tempfile.TemporaryDirectory() as d:
             p=Path(d);candidate=p/'image.tar'

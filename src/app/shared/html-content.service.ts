@@ -1,13 +1,13 @@
 import { isPlatformServer } from '@angular/common';
 import { Inject, Injectable, Optional, PLATFORM_ID } from '@angular/core';
 import { HttpClient, HttpResponse } from '@angular/common/http';
+import { REQUEST } from '@nguniversal/express-engine/tokens';
 import { catchError } from 'rxjs/operators';
 import { firstValueFrom, of as observableOf } from 'rxjs';
 import { HTML_SUFFIX, STATIC_FILES_PROJECT_PATH } from '../static-page/static-page-routing-paths';
 import { isEmpty } from './empty.util';
 import { LocaleService } from '../core/locale/locale.service';
 import { APP_CONFIG, AppConfig } from '../../config/app-config.interface';
-import { REQUEST } from '@nguniversal/express-engine/tokens';
 
 /**
  * Service for loading static `.html` files stored in the `/static-files` folder.
@@ -45,24 +45,19 @@ export class HtmlContentService {
   }
 
   private buildRuntimeUrl(path: string): string {
-    if (!isPlatformServer(this.platformId) || !this.request) {
+    if (!isPlatformServer(this.platformId)) {
       return path;
     }
 
     // Read bundled HTML from the HTTP listener, not the bot-protected public ingress.
-    const socket = this.request.socket;
+    const socket = this.request?.socket;
     if (!socket?.encrypted && socket?.localAddress && Number.isInteger(socket?.localPort)) {
       const address = socket.localAddress.includes(':') ? `[${socket.localAddress}]` : socket.localAddress;
       return `http://${address}:${socket.localPort}${path}`;
     }
 
-    const protocol = this.request.protocol;
-    const host = this.request.get?.('host');
-    if (!protocol || !host) {
-      return path;
-    }
-
-    return `${protocol}://${host}${path}`;
+    // Use the configured origin for TLS or non-socket renders; Host is client-controlled.
+    return `${new URL(this.appConfig.ui.baseUrl).origin}${path}`;
   }
 
   getHtmlContent(url: string) {
@@ -99,9 +94,25 @@ export class HtmlContentService {
   }
 
   /**
+   * Whether a file name taken from the URL is still one file name once the server decodes it,
+   * so it cannot address a file outside `static-files` (e.g. `..%2Findex`). A query part is ignored.
+   */
+  private isPlainFileName(fileName: string): boolean {
+    try {
+      return !/[/\\]/.test(decodeURIComponent(fileName.split('?')[0]));
+    } catch {
+      // Missing name or malformed percent-encoding: nothing to load.
+      return false;
+    }
+  }
+
+  /**
    * Get the html file content as a string by the file name and the current locale.
    */
   async getHmtlContentByPathAndLocale(fileName: string) {
+    if (!this.isPlainFileName(fileName)) {
+      return undefined;
+    }
     let url = '';
     // Get current language
     let language = this.localeService.getCurrentLanguageCode();

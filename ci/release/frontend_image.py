@@ -64,7 +64,7 @@ def check_manifest(data):
                 "trivy_sha256"):
         require(SHA.fullmatch(data[key]), f"Invalid {key}")
     require(DIGEST.fullmatch(data["node_amd64_manifest"]), "Invalid Node manifest")
-    require(data["node_version"] == "18.20.8" and data["yarn_version"] == "1.22.22"
+    require(re.fullmatch(r"22\.\d+\.\d+", data["node_version"]) and data["yarn_version"] == "1.22.22"
             and data["pm2_version"] == "7.0.3", "Unreviewed runtime/tool version change")
     require(re.fullmatch(r"v\d+\.\d+\.\d+", data["buildx_version"]), "Unpinned Buildx")
     require(re.fullmatch(r"https://github.com/aquasecurity/trivy/releases/download/v[0-9.]+/"

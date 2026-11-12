@@ -9,7 +9,9 @@ without rebuilding, verifies the registry digest, then creates a GitHub release
 `sha-FULL_COMMIT` with small JSON reports. No server deployment runs in CI.
 
 `image/toolchain.json` owns pinned Node/Yarn/PM2, Buildx/BuildKit, scanner and
-publisher versions, and the allowed APK build tools. Python, make and g++ resolve
+publisher versions, and the allowed APK build tools. The release follows upstream's
+Node 22 runtime line, with an exact base digest/version checked during the build;
+new major versions require deliberate qualification. Python, make and g++ resolve
 from the pinned base image's Alpine release repositories; exact package revisions
 may be replaced there. The image retains their resolved inventory in
 `/usr/share/clarin-build/apk-packages.txt`. Source revision and package/lock hashes are derived from the

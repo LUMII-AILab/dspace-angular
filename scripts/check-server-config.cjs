@@ -96,8 +96,10 @@ try {
     ['browser', { localAddress: '127.0.0.1', localPort: 4000 }, ''],
   ]) {
     const context = {
+      URL,
       isPlatformServer: value => value === 'server',
-      state: { platformId: platform, request: { protocol: 'https', get: () => 'public.example', socket } },
+      state: { platformId: platform, appConfig: { ui: { baseUrl: 'https://public.example/repository' } },
+        request: { protocol: 'https', get: () => 'attacker.example', socket } },
       contentPath,
     };
     const actual = vm.runInNewContext(urlCode + '\nContentUrl.prototype.buildRuntimeUrl.call(state, contentPath)', context);
